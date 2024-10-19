@@ -55,9 +55,16 @@ cs162-hc-feedback/
 ### Git Workflow
 
 1. Create a new branch for each feature/bugfix:
+For a feature:
 
    ```bash
-   git checkout -b feature/your-feature-name
+   git checkout -b feature/TASK-NUMBER(e.g., HFC-0)/description
+   ```
+   
+or for a bugfix:
+
+   ```bash
+   git checkout -b fix/TASK-NUMBER(e.g., HFC-0)/description
    ```
 
 2. Make your changes and commit them:
@@ -70,7 +77,7 @@ cs162-hc-feedback/
 3. Push to your branch:
 
    ```bash
-   git push origin feature/your-feature-name
+   git push origin [branch]
    ```
 
 4. Create a Pull Request on GitHub.
@@ -94,9 +101,11 @@ cs162-hc-feedback/
 
 ## Branch Naming Convention
 
-- Feature branches: `feature/description`
-- Bug fixes: `fix/description`
+- Feature branches: `feature/TASK-NUMBER(e.g., HFC-0)/description`
+- Bug fixes: `fix/TASK-NUMBER(e.g., HFC-0)/description`
 - Documentation: `docs/description`
+
+`HFC` is the task name as per our Notion Kanban.
 
 ## Commit Naming Conventions
 
