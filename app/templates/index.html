@@ -1,0 +1,58 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <!-- Search Bar -->
+    <div class="search-container">
+        <input type="text" id="searchHCs" placeholder="Search HCs" class="search-input">
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button onclick="showModal('footnoteModal')" class="btn">Example Footnote</button>
+        <button onclick="showModal('contextModal')" class="btn">Add Context</button>
+        <a href="#" class="btn" id="handbookLink">View in HC Handbook</a>
+    </div>
+
+    <!-- Feedback Form -->
+    <form id="feedbackForm" class="feedback-form" onsubmit="submitFeedback(event)">
+        <textarea id="assignmentText" placeholder="Assignment Portion to be feedback-ed here..."
+            class="feedback-textarea"></textarea>
+
+        <!-- Terms Checkbox -->
+        <div class="terms-container">
+            <input type="checkbox" id="termsAgree" required>
+            <label for="termsAgree">By submitting, I agree to the terms and conditions</label>
+        </div>
+
+        <button type="submit" class="submit-btn">REQUEST FEEDBACK</button>
+    </form>
+
+    <!-- Feedback Results -->
+    <div id="feedbackResults" class="feedback-results hidden">
+        <p id="feedbackText" class="feedback-text"></p>
+
+        <div class="actionable-steps">
+            <h3>Actionable Next Steps (Optional)</h3>
+            <div id="actionableSteps" class="steps-list"></div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="footnoteModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Example Footnote</h2>
+            <p>Example footnote content goes here...</p>
+            <button onclick="hideModal('footnoteModal')" class="btn">Close</button>
+        </div>
+    </div>
+
+    <div id="contextModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Add Context</h2>
+            <p>Context information goes here...</p>
+            <button onclick="hideModal('contextModal')" class="btn">Close</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
