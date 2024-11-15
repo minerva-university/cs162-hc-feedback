@@ -11,6 +11,37 @@
     margin: 2rem auto;
     padding: 0 1rem;
 }
+/* Minerva Logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem; /* Adds space between logo and content */
+}
+
+.minerva-logo {
+    height: 100px; /* Adjust height to be consistent with the page's design */
+    width: auto; /* Maintains aspect ratio */
+    margin-right: 10px; /* Space between the logo and any text or other content */
+    opacity: 0.8; 
+    filter: grayscale(100%); 
+}
+
+/* Welcome Section Styles */
+.welcome-section {
+    text-align: left;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f5f5f5; /* Light background to make it stand out */
+    border-radius: 8px;
+}
+
+.welcome-section h1 {
+    font-size: 2rem;
+    color: var(--primary-color); /* Use primary color for coherence */
+    margin: 0;
+    font-weight: bold;
+}
+
 
 /* Search Bar Styles */
 .search-container {
@@ -24,7 +55,23 @@
     border-radius: 4px;
     font-size: 1rem;
 }
+/* HC List Styles */
+.hc-list {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    font-family: Arial, sans-serif; /* Ensures consistent font */
+}
 
+.hc-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.hc-feedback-description {
+    font-size: 1rem;
+    color: var(--secondary-color); /* Matches secondary color */
+    margin-top: 0.5rem;
+    line-height: 1.5;
+}
 /* Button Styles */
 .action-buttons {
     display: flex;
@@ -106,6 +153,43 @@
 .hidden {
     display: none;
 }
+/* Handbook Modal Styles */
+.modal-content {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center; /* Center-align text */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow */
+}
+
+.modal-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.modal-content p {
+    font-size: 1rem;
+    color: var(--secondary-color); /* Adjust color if needed */
+    margin-bottom: 1.5rem;
+}
+
+.modal-content .btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    text-transform: uppercase; /* Optional for styling */
+}
+
+.modal-content .btn:hover {
+    opacity: 0.9;
+}
+
 
 /* Tooltip Styles */
 .tooltip {
@@ -133,3 +217,11 @@
 .tooltip:hover .tooltip-text {
     visibility: visible;
 }
+
+/* Universal Font Style */
+* {
+    font-family: Arial, sans-serif; /* Replace with desired font */
+    font-size: 1rem; /* Set default font size */
+    box-sizing: border-box; /* Ensure consistent sizing for all elements */
+}
+

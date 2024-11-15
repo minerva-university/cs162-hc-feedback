@@ -1,7 +1,30 @@
 <!-- templates/index.html -->
 {% extends "base.html" %}
 {% block content %}
+<!-- Example placement at the top -->
+<div class="logo-container">
+    <img src="{{ url_for('static', filename='images/minerva-logo.png') }}" alt="Minerva University Logo" class="minerva-logo">
+</div>
+
+<div class="welcome-section">
+    <h1>Welcome, Student</h1>
+</div>
+
+
 <div class="container">
+    <!-- HC List Section -->
+    <div id="hcList" class="hc-list">
+        <h2>HCs Feedback</h2>
+        <p class="hc-feedback-description">
+            This tool will help you receive feedback on your applications and gain a better understanding of HC processes.
+        </p>
+        <ul id="hcItems">
+        <!-- Example HCs; replace with actual HC items -->
+            <li class="hc-item">Example: #networks</li>
+
+        </ul>
+    </div>
+
     <!-- Search Bar -->
     <div class="search-container">
         <input type="text" id="searchHCs" placeholder="Search HCs" class="search-input">
@@ -11,7 +34,8 @@
     <div class="action-buttons">
         <button onclick="showModal('footnoteModal')" class="btn">Example Footnote</button>
         <button onclick="showModal('contextModal')" class="btn">Add Context</button>
-        <a href="#" class="btn" id="handbookLink">View in HC Handbook</a>
+        <a href="#" class="btn" id="handbookLink" onclick="showHandbookMessage()">View in HC Handbook</a>
+
     </div>
 
     <!-- Feedback Form -->
@@ -54,5 +78,14 @@
             <button onclick="hideModal('contextModal')" class="btn">Close</button>
         </div>
     </div>
+    <!-- Handbook Message Modal -->
+    <div id="handbookModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Notice</h2>
+            <p>You will be directed to the HC Handbook.</p>
+            <button onclick="hideModal('handbookModal')" class="btn">Close</button>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
