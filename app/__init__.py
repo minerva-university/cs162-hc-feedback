@@ -14,7 +14,7 @@ def create_app():
     app.config["SECRET_KEY"] = "dev"  # Change this in production!
     db_path = os.path.join(os.path.dirname(__file__), "database", "hc_data.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}" 
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Disable tracking to save resources
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True  # Disable tracking to save resources
 
     # Initialize database
     db.init_app(app)
