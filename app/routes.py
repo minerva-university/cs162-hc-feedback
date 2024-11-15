@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, jsonify, request
+from .models import HCDescription
 
 main = Blueprint("main", __name__)
 
@@ -34,3 +35,23 @@ def get_feedback():
         ],
     }
     return jsonify(feedback)
+
+
+@main.route("/api/hc_descriptions", methods=["GET"])
+def get_hc_descriptions():
+    """
+    A route to demonstrate the database connection.
+    Returns JSON with all HC descriptions.
+    """
+    hc_descriptions = HCDescription.query.all()
+    data = [
+        {
+            "id": hc.id,
+            "HC_name": hc.HC_name,
+            "short_desc": hc.short_desc,
+            "paragraph_desc": hc.paragraph_desc,
+            "grade_reqs": hc.grade_reqs,
+        }
+        for hc in hc_descriptions
+    ]
+    return jsonify(data)
