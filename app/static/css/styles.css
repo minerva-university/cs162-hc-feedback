@@ -11,20 +11,6 @@
     margin: 2rem auto;
     padding: 0 1rem;
 }
-/* Minerva Logo */
-.logo-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1.5rem; /* Adds space between logo and content */
-}
-
-.minerva-logo {
-    height: 100px; /* Adjust height to be consistent with the page's design */
-    width: auto; /* Maintains aspect ratio */
-    margin-right: 10px; /* Space between the logo and any text or other content */
-    opacity: 0.8; 
-    filter: grayscale(100%); 
-}
 
 /* Welcome Section Styles */
 .welcome-section {
