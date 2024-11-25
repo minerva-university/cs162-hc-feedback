@@ -15,9 +15,10 @@ hc_composition = HCDescription(
         "through clear, well-justified work at an appropriate level of depth. There are no remaining gaps, errors, or flaws relevant to the application. "
         "The work is strong enough to be used as an exemplar in the course."
     ),
-    grade_reqs=(
-        "4: Understanding of the learning outcome is evident through clear, well-justified work at an appropriate level of depth. "
-        "There are no remaining gaps, errors, or flaws relevant to the application. The work is strong enough to be used as an exemplar in the course."
+    course="CS",  # Course category
+    application_example=(
+        "Compose a research proposal with clear objectives and structure, ensuring the language is precise and the arguments are logical. "
+        "An exemplary composition will communicate ideas effectively to both technical and non-technical audiences."
     ),
 )
 
@@ -31,9 +32,10 @@ hc_audience = HCDescription(
         "Learning about and carefully considering an audience’s point of view can help design communications that they can grasp, appeal to their "
         "interests, and perceive as compelling."
     ),
-    grade_reqs=(
-        "4: Understanding of the learning outcome is evident through clear, well-justified work at an appropriate level of depth. "
-        "There are no remaining gaps, errors, or flaws relevant to the application. The work is strong enough to be used as an exemplar in the course."
+    course="AH",  # Course category
+    application_example=(
+        "Deliver a persuasive speech tailored to a diverse audience, addressing their varying perspectives and interests. "
+        "An exemplary speech will demonstrate a deep understanding of the audience and achieve a compelling delivery."
     ),
 )
 
