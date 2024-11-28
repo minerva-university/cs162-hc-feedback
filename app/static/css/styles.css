@@ -1,4 +1,8 @@
 /* static/css/styles.css */
+* {
+    font-family: Arial, sans-serif;
+}
+
 :root {
     --primary-color: #333;
     --secondary-color: #666;
@@ -58,6 +62,19 @@
     margin-top: 0.5rem;
     line-height: 1.5;
 }
+/* Terms Container Styles */
+.terms-container {
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.terms-container label {
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+}
+
 /* Button Styles */
 .action-buttons {
     display: flex;
@@ -103,16 +120,63 @@
     margin-top: 2rem;
 }
 
+/* Submit Button Styles */
+.submit-btn {
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.submit-btn:hover {
+    opacity: 0.9;
+}
+
+.submit-btn:disabled {
+    background-color: var(--secondary-color);
+    cursor: not-allowed;
+}
+
+/* Feedback Results Enhancement */
+.feedback-text {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.actionable-steps h3 {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
 .steps-list {
     margin-top: 1rem;
 }
 
 .step-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    position: relative;
+    background-color: #f5f5f5;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+}
+
+.step-item input[type="checkbox"] {
+    margin-right: 0.75rem;
+    transform: scale(1.2);
+}
+
+.step-item span {
+    flex: 1;
+    line-height: 1.4;
 }
 
 /* Modal Styles */
