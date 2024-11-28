@@ -19,19 +19,10 @@ function showModal(modalId) {
 function hideModal(modalId) {
   document.getElementById(modalId).classList.add("hidden");
 }
-function showHandbookMessage() {
-  const handbookModal = document.getElementById('handbookModal');
-  handbookModal.classList.remove('hidden');
-}
 
 function hideModal(modalId) {
   document.getElementById(modalId).classList.add('hidden');
 }
-
-// Update the "View in HC Handbook" button with onclick
-document.getElementById("handbookLink").onclick = showHandbookMessage;
-
-
 
 async function submitFeedback(event) {
   event.preventDefault();
