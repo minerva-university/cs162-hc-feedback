@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from app.models import db
+from app.data import HC_EXAMPLES_DATA
+
 
 def create_app():
     """
@@ -30,19 +32,24 @@ def create_app():
 
     return app
 
+
 def initialize_database():
     from app.models import HCExample
 
     # Only add initial data if table is empty
     if HCExample.query.first() is None:
-        initial_data = [
+        examples = [
             HCExample(
-                hc_name="thesis",
-                general_example="You are struck by the number of homeless people you see on the streets of San Francisco and decide to investigate further and write an article in an undergraduate journal. While you may feel outraged by the poor social and economic support you find in the city for this population, you realize that you need to do more than express your outrage in your article. You must present a clear and specific claim about conditions contributing to this problem. As such, you end the introduction of your essay with a clear, arguable, and precise thesis based on your findings: Investing in homeless shelters is merely a temporary relief to homelessness in San Francisco because doing so fails to address underlying causes in terms of housing unaffordability, low wages, and rising inflation.",
-                footnote="The thesis lays out precisely what the paper will argue, provides a clear indication of the significant reasons you'll offer in support of that argument, and explains the relevance of your argument. The statement is arguable, precise, and clear."
-            ),
-            # Add more examples here as needed
+                hc_name=data["hc_name"],
+                general_example=data["general_example"],
+                footnote=data["footnote"],
+            )
+            for data in HC_EXAMPLES_DATA
         ]
 
-        db.session.bulk_save_objects(initial_data)
-        db.session.commit()
+        # Use chunks to avoid memory issues with large datasets
+        chunk_size = 50
+        for i in range(0, len(examples), chunk_size):
+            chunk = examples[i : i + chunk_size]
+            db.session.bulk_save_objects(chunk)
+            db.session.commit()
