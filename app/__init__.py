@@ -50,6 +50,6 @@ def initialize_database():
         # Use chunks to avoid memory issues with large datasets
         chunk_size = 50
         for i in range(0, len(examples), chunk_size):
-            chunk = examples[i: i + chunk_size]
+            chunk = examples[i : i + chunk_size]
             db.session.bulk_save_objects(chunk)
             db.session.commit()

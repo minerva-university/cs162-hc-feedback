@@ -1,7 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Remove or comment out initializeSearch() since we removed the search bar
-    // initializeSearch();
-    loadHCExamples();
+  loadHCExamples();
+
+  // Add click handlers for all modals
+  document.querySelectorAll(".modal").forEach((modal) => {
+    modal.addEventListener("click", (e) => {
+      // Close if clicking outside the modal content
+      if (e.target === modal) {
+        hideModal(modal.id);
+      }
+    });
+  });
 });
 
 // Remove or comment out the initializeSearch function since it's no longer needed
