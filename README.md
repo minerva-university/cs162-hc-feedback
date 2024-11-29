@@ -60,7 +60,7 @@ For a feature:
    ```bash
    git checkout -b feature/TASK-NUMBER(e.g., HFC-0)/description
    ```
-   
+
 or for a bugfix:
 
    ```bash
