@@ -27,6 +27,7 @@ def get_hc_examples():
         [
             {
                 "hc_name": ex.hc_name,
+                "cornerstone": ex.cornerstone,
                 "general_example": ex.general_example,
                 "footnote": ex.footnote,
             }

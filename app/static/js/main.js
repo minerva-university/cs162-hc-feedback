@@ -1,76 +1,87 @@
+// Store all examples globally for filtering
+let allExamples = [];
+
 document.addEventListener("DOMContentLoaded", function () {
   loadHCExamples();
 
   // Add click handlers for all modals
   document.querySelectorAll(".modal").forEach((modal) => {
-    modal.addEventListener("click", (e) => {
-      // Close if clicking outside the modal content
-      if (e.target === modal) {
-        hideModal(modal.id);
-      }
-    });
+      modal.addEventListener("click", (e) => {
+          // Close if clicking outside the modal content
+          if (e.target === modal) {
+              hideModal(modal.id);
+          }
+      });
   });
-});
 
-// Remove or comment out the initializeSearch function since it's no longer needed
-/*
-function initializeSearch() {
-    const searchInput = document.getElementById("searchHCs");
-    searchInput.addEventListener("input", function (e) {
-        console.log("Searching for:", e.target.value);
-    });
-}
-*/
+  // Add event listeners for search and cornerstone filter
+  document.getElementById("cornerstoneFilter").addEventListener("change", filterHCs);
+});
 
 async function loadHCExamples() {
   try {
-    const response = await fetch("/api/hc-examples");
-    const examples = await response.json();
-    const select = document.getElementById("hcSelect");
+      const response = await fetch("/api/hc-examples");
+      allExamples = await response.json();
+      updateHCSelect(allExamples);
+  } catch (error) {
+      console.error("Error loading HC examples:", error);
+  }
+}
 
-    examples.forEach((example) => {
+function updateHCSelect(examples) {
+  const select = document.getElementById("hcSelect");
+  select.innerHTML = '<option value="">Select an HC example...</option>';
+
+  examples.forEach(example => {
       const option = document.createElement("option");
       option.value = example.hc_name;
-      option.textContent = example.hc_name;
+      option.textContent = `${example.hc_name}`;
       select.appendChild(option);
-    });
+  });
 
-    // Remove the automatic modal trigger
-    // Just log that the selection changed
-    select.addEventListener("change", (e) => {
+  // Add change event listener
+  select.addEventListener("change", (e) => {
       if (e.target.value) {
-        console.log("Selected HC:", e.target.value);
+          console.log("Selected HC:", e.target.value);
       }
-    });
-  } catch (error) {
-    console.error("Error loading HC examples:", error);
-  }
+  });
+}
+
+function filterHCs() {
+  const selectedCornerstone = document.getElementById("cornerstoneFilter").value;
+
+  const filteredExamples = allExamples.filter(example => {
+      const matchesCornerstone = !selectedCornerstone || example.cornerstone === selectedCornerstone;
+      return matchesCornerstone;
+  });
+
+  updateHCSelect(filteredExamples);
 }
 
 async function showModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modalId === "footnoteModal") {
-    try {
-      const selectedHC = document.getElementById("hcSelect").value;
-      const response = await fetch(`/api/hc-example/${selectedHC}`);
-      const data = await response.json();
+      try {
+          const selectedHC = document.getElementById("hcSelect").value;
+          const response = await fetch(`/api/hc-example/${selectedHC}`);
+          const data = await response.json();
 
-      const modalContent = modal.querySelector(".modal-content");
-      modalContent.innerHTML = `
-        <h2>Example: ${selectedHC}</h2>
-        <div class="example-content">
-          <h3>General Example</h3>
-          <p>${data.general_example}</p>
-        </div>
-        <div class="footnote-content">
-          <h3>Footnote</h3>
-          <p>${data.footnote}</p>
-        </div>
-        <button onclick="hideModal('footnoteModal')" class="btn">Close</button>
-      `;
-    } catch (error) {
-      console.error("Error fetching example:", error);
-    }
+          const modalContent = modal.querySelector(".modal-content");
+          modalContent.innerHTML = `
+              <h2>Example: ${selectedHC}</h2>
+              <div class="example-content">
+                  <h3>General Example</h3>
+                  <p>${data.general_example}</p>
+              </div>
+              <div class="footnote-content">
+                  <h3>Footnote</h3>
+                  <p>${data.footnote}</p>
+              </div>
+              <button onclick="hideModal('footnoteModal')" class="btn">Close</button>
+          `;
+      } catch (error) {
+          console.error("Error fetching example:", error);
+      }
   }
   modal.classList.remove("hidden");
 }
@@ -78,13 +89,10 @@ async function showModal(modalId) {
 function hideModal(modalId) {
   document.getElementById(modalId).classList.add("hidden");
 }
+
 function showHandbookMessage() {
   const handbookModal = document.getElementById("handbookModal");
   handbookModal.classList.remove("hidden");
-}
-
-function hideModal(modalId) {
-  document.getElementById(modalId).classList.add("hidden");
 }
 
 // Update the "View in HC Handbook" button with onclick
@@ -100,24 +108,24 @@ async function submitFeedback(event) {
   submitButton.disabled = true;
 
   try {
-    const response = await fetch("/api/feedback", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        text: document.getElementById("assignmentText").value,
-      }),
-    });
+      const response = await fetch("/api/feedback", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+              text: document.getElementById("assignmentText").value,
+          }),
+      });
 
-    const data = await response.json();
-    displayFeedback(data);
+      const data = await response.json();
+      displayFeedback(data);
   } catch (error) {
-    console.error("Error:", error);
-    alert("An error occurred while processing your feedback request.");
+      console.error("Error:", error);
+      alert("An error occurred while processing your feedback request.");
   } finally {
-    submitButton.textContent = originalText;
-    submitButton.disabled = false;
+      submitButton.textContent = originalText;
+      submitButton.disabled = false;
   }
 }
 
@@ -134,18 +142,18 @@ function displayFeedback(feedback) {
   stepsContainer.innerHTML = ""; // Clear existing steps
 
   feedback.actionable_steps.forEach((step) => {
-    const stepElement = document.createElement("div");
-    stepElement.className = "step-item";
+      const stepElement = document.createElement("div");
+      stepElement.className = "step-item";
 
-    stepElement.innerHTML = `
-            <input type="checkbox">
-            <span>${step.text}</span>
-            <div class="tooltip">
-                ℹ️
-                <span class="tooltip-text">${step.tooltip}</span>
-            </div>
-        `;
+      stepElement.innerHTML = `
+          <input type="checkbox">
+          <span>${step.text}</span>
+          <div class="tooltip">
+              ℹ️
+              <span class="tooltip-text">${step.tooltip}</span>
+          </div>
+      `;
 
-    stepsContainer.appendChild(stepElement);
+      stepsContainer.appendChild(stepElement);
   });
 }
