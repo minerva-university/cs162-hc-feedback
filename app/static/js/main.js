@@ -14,12 +14,12 @@ function initializeSearch() {
 
 async function showModal(modalId) {
   const modal = document.getElementById(modalId);
-  if (modalId === 'footnoteModal') {
+  if (modalId === "footnoteModal") {
     try {
-      const response = await fetch('/api/hc-example/thesis');
+      const response = await fetch("/api/hc-example/thesis");
       const data = await response.json();
 
-      const modalContent = modal.querySelector('.modal-content');
+      const modalContent = modal.querySelector(".modal-content");
       modalContent.innerHTML = `
         <h2>Example Footnote</h2>
         <div class="example-content">
@@ -33,28 +33,26 @@ async function showModal(modalId) {
         <button onclick="hideModal('footnoteModal')" class="btn">Close</button>
       `;
     } catch (error) {
-      console.error('Error fetching example:', error);
+      console.error("Error fetching example:", error);
     }
   }
-  modal.classList.remove('hidden');
+  modal.classList.remove("hidden");
 }
 
 function hideModal(modalId) {
   document.getElementById(modalId).classList.add("hidden");
 }
 function showHandbookMessage() {
-  const handbookModal = document.getElementById('handbookModal');
-  handbookModal.classList.remove('hidden');
+  const handbookModal = document.getElementById("handbookModal");
+  handbookModal.classList.remove("hidden");
 }
 
 function hideModal(modalId) {
-  document.getElementById(modalId).classList.add('hidden');
+  document.getElementById(modalId).classList.add("hidden");
 }
 
 // Update the "View in HC Handbook" button with onclick
 document.getElementById("handbookLink").onclick = showHandbookMessage;
-
-
 
 async function submitFeedback(event) {
   event.preventDefault();
