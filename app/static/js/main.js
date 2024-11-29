@@ -12,8 +12,31 @@ function initializeSearch() {
   });
 }
 
-function showModal(modalId) {
-  document.getElementById(modalId).classList.remove("hidden");
+async function showModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modalId === 'footnoteModal') {
+    try {
+      const response = await fetch('/api/hc-example/thesis');
+      const data = await response.json();
+
+      const modalContent = modal.querySelector('.modal-content');
+      modalContent.innerHTML = `
+        <h2>Example Footnote</h2>
+        <div class="example-content">
+          <h3>General Example</h3>
+          <p>${data.general_example}</p>
+        </div>
+        <div class="footnote-content">
+          <h3>Footnote</h3>
+          <p>${data.footnote}</p>
+        </div>
+        <button onclick="hideModal('footnoteModal')" class="btn">Close</button>
+      `;
+    } catch (error) {
+      console.error('Error fetching example:', error);
+    }
+  }
+  modal.classList.remove('hidden');
 }
 
 function hideModal(modalId) {

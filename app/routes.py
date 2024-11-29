@@ -1,13 +1,22 @@
 from flask import Blueprint, render_template, jsonify, request
+from app.models import HCExample
 
 main = Blueprint("main", __name__)
-
 
 @main.route("/")
 def index():
     """Render the main page of the application."""
     return render_template("index.html")
 
+@main.route("/api/hc-example/<hc_name>")
+def get_hc_example(hc_name):
+    example = HCExample.query.filter_by(hc_name=hc_name).first()
+    if example:
+        return jsonify({
+            "general_example": example.general_example,
+            "footnote": example.footnote
+        })
+    return jsonify({"error": "Example not found"}), 404
 
 @main.route("/api/feedback", methods=["POST"])
 def get_feedback():
