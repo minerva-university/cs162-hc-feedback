@@ -196,8 +196,9 @@
     background-color: white;
     padding: 2rem;
     border-radius: 4px;
-    max-width: 500px;
-    width: 90%;
+    max-width: 600px; /* Increased to accommodate the longer text */
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .hidden {
@@ -266,6 +267,24 @@
 
 .tooltip:hover .tooltip-text {
     visibility: visible;
+}
+
+/* Example and Footnote Modal Styles */
+.example-content, .footnote-content {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.example-content h3, .footnote-content h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.example-content p, .footnote-content p {
+    line-height: 1.6;
+    color: var(--secondary-color);
+    font-size: 0.95rem;
 }
 
 /* Universal Font Style */
