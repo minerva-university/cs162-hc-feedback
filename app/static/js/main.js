@@ -1,27 +1,55 @@
-// static/js/main.js
 document.addEventListener("DOMContentLoaded", function () {
-  // Initialize any necessary components
-  initializeSearch();
+    // Remove or comment out initializeSearch() since we removed the search bar
+    // initializeSearch();
+    loadHCExamples();
 });
 
+// Remove or comment out the initializeSearch function since it's no longer needed
+/*
 function initializeSearch() {
-  const searchInput = document.getElementById("searchHCs");
-  searchInput.addEventListener("input", function (e) {
-    // Implement search functionality here
-    console.log("Searching for:", e.target.value);
-  });
+    const searchInput = document.getElementById("searchHCs");
+    searchInput.addEventListener("input", function (e) {
+        console.log("Searching for:", e.target.value);
+    });
+}
+*/
+
+async function loadHCExamples() {
+  try {
+    const response = await fetch("/api/hc-examples");
+    const examples = await response.json();
+    const select = document.getElementById("hcSelect");
+
+    examples.forEach((example) => {
+      const option = document.createElement("option");
+      option.value = example.hc_name;
+      option.textContent = example.hc_name;
+      select.appendChild(option);
+    });
+
+    // Remove the automatic modal trigger
+    // Just log that the selection changed
+    select.addEventListener("change", (e) => {
+      if (e.target.value) {
+        console.log("Selected HC:", e.target.value);
+      }
+    });
+  } catch (error) {
+    console.error("Error loading HC examples:", error);
+  }
 }
 
 async function showModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modalId === "footnoteModal") {
     try {
-      const response = await fetch("/api/hc-example/thesis");
+      const selectedHC = document.getElementById("hcSelect").value;
+      const response = await fetch(`/api/hc-example/${selectedHC}`);
       const data = await response.json();
 
       const modalContent = modal.querySelector(".modal-content");
       modalContent.innerHTML = `
-        <h2>Example Footnote</h2>
+        <h2>Example: ${selectedHC}</h2>
         <div class="example-content">
           <h3>General Example</h3>
           <p>${data.general_example}</p>
