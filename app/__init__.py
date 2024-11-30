@@ -41,6 +41,7 @@ def initialize_database():
         examples = [
             HCExample(
                 hc_name=data["hc_name"],
+                cornerstone=data["cornerstone"],
                 general_example=data["general_example"],
                 footnote=data["footnote"],
             )
