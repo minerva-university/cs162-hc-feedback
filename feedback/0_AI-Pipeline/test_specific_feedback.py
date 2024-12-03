@@ -42,11 +42,17 @@ def demonstrate_feedback_process():
     if failed_pitfalls:
         print("Failed Pitfalls:", ", ".join(failed_pitfalls))
 
-    # Show generated checklist
-    print("\n4. Generated Specific Feedback:")
+    # # Show generated checklist without Why sections (for UI)
+    # print("\n4. Generated Specific Feedback (UI Version):")
+    # print("-" * 40)
+    # checklist = generate_checklist(test_thesis, include_why=False)
+    # print(checklist)
+
+    # Show full feedback including Why sections (for debugging/development)
+    print("\n5. Complete Feedback with Explanations (Debug Version):")
     print("-" * 40)
-    checklist = generate_checklist(test_thesis)
-    print(checklist)
+    full_checklist = generate_checklist(test_thesis, include_why=True)
+    print(full_checklist)
 
 if __name__ == "__main__":
     demonstrate_feedback_process()

@@ -9,18 +9,20 @@ from evaluation import evaluate_all_criteria
 analysis_model = initialize_analysis_model()
 
 def generate_specific_feedback_for_criterion(thesis_text, criterion, criterion_type="criteria"):
-    """Generate specific line-by-line feedback for a failed criterion"""
+    """Generate specific line-by-line feedback with hidden explanation"""
     prompt = f"""
 Analyze this thesis specifically against this {criterion_type}:
 "{criterion}"
 
-Provide EXACTLY ONE specific change needed in this format:
+Provide a specific change AND explanation in this format:
 - [ ] Change: <what needs to change>
   From: <specific part that needs change>
   To: <specific suggested revision>
+  Why: <one-line, 100-character explanation of how this change helps pass the criterion from a FAIL to a PASS. Be straightforward. No need complete sentence. Skip "This revision...">
 
-Focus on the most important change needed to satisfy this specific {criterion_type}.
-Be precise and concrete in your suggestion.
+The Why section should be specific to this change and criterion.
+Focus on the most important change needed.
+Be precise and concrete.
 
 Thesis: {thesis_text}
 """
@@ -48,8 +50,19 @@ Thesis: {thesis_text}
         print(f"Error in pitfall evaluation: {e}")
         return False
 
-def generate_checklist(thesis_text):
-    """Generate a checklist of specific changes needed based on failed criteria and pitfalls"""
+def format_feedback_for_display(feedback_items, include_why=False):
+    """Format feedback items, optionally including or excluding Why sections"""
+    display_items = []
+    for item in feedback_items:
+        lines = item.split('\n')
+        if not include_why:
+            # Filter out Why lines
+            lines = [line for line in lines if not line.strip().startswith('Why:')]
+        display_items.append('\n'.join(lines))
+    return '\n\n'.join(display_items)
+
+def generate_checklist(thesis_text, include_why=False):
+    """Generate a checklist with optional Why explanations"""
     feedback_items = []
 
     # Check guided criteria
@@ -74,4 +87,7 @@ def generate_checklist(thesis_text):
             if feedback:
                 feedback_items.append(feedback)
 
-    return "\n\n".join(feedback_items) if feedback_items else "No specific changes needed."
+    if not feedback_items:
+        return "No specific changes needed."
+
+    return format_feedback_for_display(feedback_items, include_why)

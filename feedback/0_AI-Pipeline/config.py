@@ -2,6 +2,8 @@ import os
 
 import google.generativeai as genai
 
+carl_api_key = "AIzaSyAs-P8UYkzIWuRDvQ65bn7YyLB5RS_qBrE"
+
 # Thesis evaluation criteria
 GUIDED_REFLECTION_CRITERIA = [
     "Have you ensured your thesis is substantial, precise, relevant, arguable, concise, and sets up the forthcoming evidence?",
@@ -45,7 +47,7 @@ def initialize_evaluation_model():
     """Initialize model optimized for Pass/Fail evaluation"""
     try:
         print("[DEBUG] Configuring evaluation model")
-        api_key = "AIzaSyAs-P8UYkzIWuRDvQ65bn7YyLB5RS_qBrE"
+        api_key = carl_api_key
         print(f"[DEBUG] API Key present: {bool(api_key)}")
         genai.configure(api_key=api_key)
 
@@ -67,7 +69,7 @@ def initialize_analysis_model():
     """Initialize model for detailed analysis"""
     try:
         print("[DEBUG] Configuring analysis model")
-        api_key = "AIzaSyAs-P8UYkzIWuRDvQ65bn7YyLB5RS_qBrE"
+        api_key = carl_api_key
         print(f"[DEBUG] API Key present: {bool(api_key)}")
         genai.configure(api_key=api_key)
 
