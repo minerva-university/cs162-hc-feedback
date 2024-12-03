@@ -4,23 +4,25 @@ import google.generativeai as genai
 
 # Thesis evaluation criteria
 GUIDED_REFLECTION_CRITERIA = [
-    "Is it substantial, precise, relevant, arguable, concise, and sets up evidence?",
-    "Is it appropriate in scope?",
-    "Is it supported by evidence?",
-    "Does it reference types of evidence?",
-    "Is it a one to two sentence statement?",
+    "Have you ensured your thesis is substantial, precise, relevant, arguable, concise, and sets up the forthcoming evidence?",
+    "Have you ensured your thesis is appropriate in terms of scope?",
+    "Have you ensured your thesis is supported by the evidence of your work?",
+    "Have you ensured your thesis references what type of evidence you will use to give the reader an idea of how you will support your claim?",
+    "Have you ensured your thesis is a one to two sentence statement of your main claim?",
+    "When applicable, have you provided a detailed justification for a thesis critique or suggested a non-trivial improvement?",
+    "Have you revised your thesis when you've finished a complete first draft to tailor it to the evidence and reasoning you provided?"
 ]
 
 # Common thesis pitfalls
 COMMON_PITFALLS = [
-    "Too vague/open-ended",
-    "Too long/too many topics",
-    "No clear stance",
-    "Claim without reasoning. For example, the thesis says A is B but does not mention A is B because of X, Y, and Z.",
-    "Missing importance",
-    "Unclear statement",
-    "Undefined main points",
-    "Scope mismatch",
+    "The application's thesis is too vague or opened-ended.",
+    "The application's thesis is too long or mentions too many topics.",
+    "The application's thesis does not take a stance.",
+    "The application's thesis states a claim with no reasoning. For example, the thesis says A is B but does not mention A is B because of X, Y, and Z.",
+    "The application's thesis provides a claim and reasoning but neglects to mention the importance of the claim. For example, the thesis states A is B because of X, Y, and Z but does not include that A is B because of X, Y, and Z, which is important for D.",
+    "The application has a strong central idea, but the thesis is not stated clearly or easily found within the paper.",
+    "The application lives within a paper that has yet to identify its main points, which makes it hard to write a precise thesis.",
+    "The thesis is not revised throughout the process of writing and researching, so it does not match the scope or accomplishments of the work."
 ]
 
 
