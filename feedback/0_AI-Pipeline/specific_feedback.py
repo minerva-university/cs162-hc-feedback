@@ -1,32 +1,56 @@
-from config import initialize_analysis_model, get_pitfalls
+from config import (
+    initialize_analysis_model,
+    initialize_evaluation_model,
+    get_criteria,
+    get_pitfalls
+)
+from evaluation import evaluate_all_criteria
 
-model = initialize_analysis_model()
+analysis_model = initialize_analysis_model()
 
-def generate_checklist(thesis_text):
-    pitfalls = get_pitfalls()
-    pitfalls_list = "\n".join(f"- {pitfall}" for pitfall in pitfalls)
-
+def generate_specific_feedback_for_criterion(thesis_text, criterion, criterion_type="criteria"):
+    """Generate specific line-by-line feedback for a failed criterion"""
     prompt = f"""
-Analyze this thesis against common pitfalls and create a checklist of specific changes needed:
-{pitfalls_list}
+Analyze this thesis specifically against this {criterion_type}:
+"{criterion}"
 
-For each applicable pitfall, provide:
-1. What needs to change
-2. Specific text to modify
-3. Suggested revision
+Provide EXACTLY ONE specific change needed in this format:
+- [ ] Change: <what needs to change>
+  From: <specific part that needs change>
+  To: <specific suggested revision>
 
-Format as:
-- [ ] Change: <what>
-  From: <original>
-  To: <suggestion>
-
-Only include failed items that need changes.
+Focus on the most important change needed to satisfy this specific {criterion_type}.
+Be precise and concrete in your suggestion.
 
 Thesis: {thesis_text}
 """
     try:
-        response = model.generate_content(prompt.format(thesis_text=thesis_text))
+        response = analysis_model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
-        print(f"Error in checklist generation: {e}")
+        print(f"Error generating specific feedback: {e}")
         return None
+
+def generate_checklist(thesis_text):
+    """Generate a checklist of specific changes needed based on failed criteria"""
+    # First, evaluate against all criteria
+    evaluation_results = evaluate_all_criteria(thesis_text)
+    criteria = get_criteria()
+
+    # Generate specific feedback for failed criteria
+    feedback_items = []
+    for criterion, passed in zip(criteria, evaluation_results):
+        if not passed:
+            feedback = generate_specific_feedback_for_criterion(thesis_text, criterion)
+            if feedback:
+                feedback_items.append(feedback)
+
+    # Also check common pitfalls
+    pitfalls = get_pitfalls()
+    for pitfall in pitfalls:
+        feedback = generate_specific_feedback_for_criterion(thesis_text, pitfall, "pitfall")
+        if feedback:
+            feedback_items.append(feedback)
+
+    # Combine all feedback items
+    return "\n\n".join(feedback_items) if feedback_items else "No specific changes needed."
