@@ -31,26 +31,47 @@ Thesis: {thesis_text}
         print(f"Error generating specific feedback: {e}")
         return None
 
+def evaluate_pitfall(thesis_text, pitfall):
+    """Evaluate if a thesis avoids a specific pitfall"""
+    prompt = f"""
+You are a strict thesis evaluator. Determine if this thesis AVOIDS this pitfall:
+"{pitfall}"
+
+Respond with EXACTLY one word: "PASS" if the thesis avoids the pitfall, "FAIL" if it exhibits the pitfall.
+
+Thesis: {thesis_text}
+"""
+    try:
+        response = analysis_model.generate_content(prompt)
+        return response.text.strip().upper() == "PASS"
+    except Exception as e:
+        print(f"Error in pitfall evaluation: {e}")
+        return False
+
 def generate_checklist(thesis_text):
-    """Generate a checklist of specific changes needed based on failed criteria"""
-    # First, evaluate against all criteria
+    """Generate a checklist of specific changes needed based on failed criteria and pitfalls"""
+    feedback_items = []
+
+    # Check guided criteria
+    print("\nEvaluating guided criteria...")
     evaluation_results = evaluate_all_criteria(thesis_text)
     criteria = get_criteria()
 
-    # Generate specific feedback for failed criteria
-    feedback_items = []
-    for criterion, passed in zip(criteria, evaluation_results):
+    for i, (criterion, passed) in enumerate(zip(criteria, evaluation_results)):
         if not passed:
+            print(f"Generating feedback for failed criterion #{i+1}")
             feedback = generate_specific_feedback_for_criterion(thesis_text, criterion)
             if feedback:
                 feedback_items.append(feedback)
 
-    # Also check common pitfalls
+    # Check pitfalls
+    print("\nEvaluating common pitfalls...")
     pitfalls = get_pitfalls()
-    for pitfall in pitfalls:
-        feedback = generate_specific_feedback_for_criterion(thesis_text, pitfall, "pitfall")
-        if feedback:
-            feedback_items.append(feedback)
+    for i, pitfall in enumerate(pitfalls):
+        if not evaluate_pitfall(thesis_text, pitfall):
+            print(f"Generating feedback for failed pitfall #{i+1}")
+            feedback = generate_specific_feedback_for_criterion(thesis_text, pitfall, "pitfall")
+            if feedback:
+                feedback_items.append(feedback)
 
-    # Combine all feedback items
     return "\n\n".join(feedback_items) if feedback_items else "No specific changes needed."
