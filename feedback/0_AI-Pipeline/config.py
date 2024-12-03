@@ -75,7 +75,7 @@ def initialize_analysis_model():
             model_name="gemini-1.5-flash",
             generation_config=genai.GenerationConfig(
                 temperature=1.0,
-                max_output_tokens=10000,  # Higher tokens for detailed analysis
+                max_output_tokens=8000,  # Higher tokens for detailed analysis
             ),
         )
         print("[DEBUG] Analysis model initialized successfully")
