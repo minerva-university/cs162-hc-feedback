@@ -10,7 +10,7 @@ def generate_general_feedback(thesis_text):
 Analyze this thesis statement based on the guided reflection criteria:
 {numbered_criteria}
 
-Provide a single paragraph of constructive feedback.
+Provide a single paragraph of constructive feedback (600 characters).
 
 Thesis: {thesis_text}
 """
