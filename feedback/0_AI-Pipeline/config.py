@@ -2,7 +2,7 @@ import os
 
 import google.generativeai as genai
 
-carl_api_key = "AIzaSyAs-P8UYkzIWuRDvQ65bn7YyLB5RS_qBrE"
+carl_api_key = ""
 
 # Thesis evaluation criteria
 GUIDED_REFLECTION_CRITERIA = [

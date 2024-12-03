@@ -18,7 +18,7 @@ Provide a specific change AND explanation in this format:
 - [ ] Change: <what needs to change>
   From: <specific part that needs change>
   To: <specific suggested revision>
-  Why: <one-line, 100-character explanation of how this change helps pass the criterion from a FAIL to a PASS. Be straightforward. No need complete sentence. Skip "This revision...">
+  Why: <one-line, 75-character explanation of how this change helps pass the criterion from a FAIL to a PASS. Be straightforward. No need complete sentence. Skip "This revision...">
 
 The Why section should be specific to this change and criterion.
 Focus on the most important change needed.

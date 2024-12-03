@@ -9,6 +9,7 @@ def generate_general_feedback(thesis_text):
         f"{i+1}. {criterion}" for i, criterion in enumerate(criteria_list)
     )
 
+# todo: change "thesis" into {HC}
     prompt = f"""
 Analyze this thesis statement based on the guided reflection criteria:
 {numbered_criteria}
