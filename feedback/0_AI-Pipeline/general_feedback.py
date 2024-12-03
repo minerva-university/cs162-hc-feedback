@@ -15,7 +15,7 @@ Analyze this thesis statement based on the guided reflection criteria:
 
 Provide a single paragraph of constructive feedback (600 characters).
 
-Don't show a sample improvement, that's another agent's job.
+Don't show a sample improvement, that's another agent's job. Don't refer to criteria by numbers. Straight to point.
 
 Focus on giving high-level feedback that is still specific, but not micromanage-y.
 

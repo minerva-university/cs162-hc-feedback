@@ -22,7 +22,7 @@ Provide a specific change AND explanation in this format:
 
 The Why section should be specific to this change and criterion.
 Focus on the most important change needed.
-Be precise and concrete.
+Be precise and concrete. Don't refer to criteria by numbers.
 
 Thesis: {thesis_text}
 """
