@@ -5,6 +5,8 @@ from config import (
     get_pitfalls
 )
 from evaluation import evaluate_all_criteria
+from logging_config import logger  # Import the shared logger or setup
+import logging
 
 analysis_model = initialize_analysis_model()
 
@@ -66,23 +68,23 @@ def generate_checklist(thesis_text, include_why=False):
     feedback_items = []
 
     # Check guided criteria
-    print("\nEvaluating guided criteria...")
+    logger.debug("\nEvaluating guided criteria...")
     evaluation_results = evaluate_all_criteria(thesis_text)
     criteria = get_criteria()
 
     for i, (criterion, passed) in enumerate(zip(criteria, evaluation_results)):
         if not passed:
-            print(f"Generating feedback for failed criterion #{i+1}")
+            logger.debug(f"Generating feedback for failed criterion #{i+1}")
             feedback = generate_specific_feedback_for_criterion(thesis_text, criterion)
             if feedback:
                 feedback_items.append(feedback)
 
     # Check pitfalls
-    print("\nEvaluating common pitfalls...")
+    logger.debug("\nEvaluating common pitfalls...")
     pitfalls = get_pitfalls()
     for i, pitfall in enumerate(pitfalls):
         if not evaluate_pitfall(thesis_text, pitfall):
-            print(f"Generating feedback for failed pitfall #{i+1}")
+            logger.debug(f"Generating feedback for failed pitfall #{i+1}")
             feedback = generate_specific_feedback_for_criterion(thesis_text, pitfall, "pitfall")
             if feedback:
                 feedback_items.append(feedback)

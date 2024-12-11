@@ -1,5 +1,6 @@
 import os
-
+from logging_config import logger  # Import the shared logger or setup
+import logging
 import google.generativeai as genai
 
 carl_api_key = ""
@@ -29,12 +30,11 @@ COMMON_PITFALLS = [
 
 
 def get_criteria():
-    print("[DEBUG] Fetching evaluation criteria")
+    logger.debug("Fetching evaluation criteria")
     return GUIDED_REFLECTION_CRITERIA
 
-
 def get_pitfalls():
-    print("[DEBUG] Fetching common pitfalls")
+    logger.debug("Fetching common pitfalls")
     return COMMON_PITFALLS
 
 
@@ -46,9 +46,9 @@ def get_single_criterion(index):
 def initialize_evaluation_model():
     """Initialize model optimized for Pass/Fail evaluation"""
     try:
-        print("[DEBUG] Configuring evaluation model")
+        logger.debug("Configuring evaluation model")
         api_key = carl_api_key
-        print(f"[DEBUG] API Key present: {bool(api_key)}")
+        logger.debug(f"API Key present: {bool(api_key)}")
         genai.configure(api_key=api_key)
 
         model = genai.GenerativeModel(
@@ -58,19 +58,19 @@ def initialize_evaluation_model():
                 max_output_tokens=1,  # Minimal tokens for Pass/Fail
             ),
         )
-        print("[DEBUG] Evaluation model initialized successfully")
+        logger.debug("Evaluation model initialized successfully")
         return model
     except Exception as e:
-        print(f"[DEBUG] Error initializing evaluation model: {e}")
+        logger.debug(f"Error initializing evaluation model: {e}")
         return None
 
 
 def initialize_analysis_model():
     """Initialize model for detailed analysis"""
     try:
-        print("[DEBUG] Configuring analysis model")
+        logger.debug("Configuring analysis model")
         api_key = carl_api_key
-        print(f"[DEBUG] API Key present: {bool(api_key)}")
+        logger.debug(f"API Key present: {bool(api_key)}")
         genai.configure(api_key=api_key)
 
         model = genai.GenerativeModel(
@@ -80,8 +80,8 @@ def initialize_analysis_model():
                 max_output_tokens=8000,  # Higher tokens for detailed analysis
             ),
         )
-        print("[DEBUG] Analysis model initialized successfully")
+        logger.debug("Analysis model initialized successfully")
         return model
     except Exception as e:
-        print(f"[DEBUG] Error initializing analysis model: {e}")
+        logger.debug(f"Error initializing analysis model: {e}")
         return None
