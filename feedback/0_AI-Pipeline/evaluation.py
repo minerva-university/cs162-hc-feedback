@@ -1,4 +1,6 @@
 from config import initialize_evaluation_model, get_single_criterion, get_criteria
+from logging_config import logger  # Import the shared logger or setup
+import logging
 
 model = initialize_evaluation_model()
 
@@ -23,7 +25,7 @@ Thesis: {thesis_text}
         response = model.generate_content(prompt)
         return response.text.strip().upper() == "PASS"
     except Exception as e:
-        print(f"Error in criterion evaluation: {e}")
+        logger.error(f"Error in criterion evaluation: {e}")
         return False
 
 

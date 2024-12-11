@@ -1,5 +1,6 @@
 from main import analyze_thesis
-
+from logging_config import logger  # Import the shared logger or setup
+import logging
 
 def run_demo():
     test_theses = [
@@ -20,21 +21,21 @@ def run_demo():
 
     results = []
     for name, thesis in test_theses:
-        print(f"\n{'='*80}")
-        print(f"Example: {name}")
-        print(f"{'='*80}")
+        logger.info(f"\n{'='*80}")(f"\n{'='*80}")
+        logger.info(f"\n{'='*80}")(f"Example: {name}")
+        logger.info(f"\n{'='*80}")(f"{'='*80}")
         result = analyze_thesis(thesis)
         results.append((name, result["score"]["total"]))
         input("\nPress Enter to continue...")
 
-    print("\n=== Final Score Comparison ===")
-    print("-" * 40)
+    logger.info(f"\n{'='*80}")("\n=== Final Score Comparison ===")
+    logger.info(f"\n{'='*80}")("-" * 40)
     for name, score in results:
-        print(f"{name}: {score:.1f}%")
+        logger.info(f"\n{'='*80}")(f"{name}: {score:.1f}%")
 
 
 if __name__ == "__main__":
-    print("Welcome to the Thesis Feedback Demo")
-    print("This demo will analyze and compare three different thesis statements")
+    logger.info(f"\n{'='*80}")("Welcome to the Thesis Feedback Demo")
+    logger.info(f"\n{'='*80}")("This demo will analyze and compare three different thesis statements")
     input("Press Enter to begin...")
     run_demo()

@@ -6,8 +6,8 @@ from config import get_criteria, get_pitfalls
 
 def analyze_thesis(thesis_text):
     """Generate both general and specific feedback for a thesis"""
-    print("\n=== Thesis Analysis ===")
-    print(f'Analyzing: "{thesis_text}"\n')
+    logging.info("\n=== Thesis Analysis ===")
+    logging.info(f'Analyzing: "{thesis_text}"\n')
 
     # Calculate overall score
     criteria_results = evaluate_all_criteria(thesis_text)
@@ -18,19 +18,19 @@ def analyze_thesis(thesis_text):
     passed_checks = sum(criteria_results) + sum(pitfall_results)
     pass_percentage = (passed_checks / total_checks) * 100
 
-    print(f"Overall Score: {passed_checks}/{total_checks} ({pass_percentage:.1f}%)")
-    print(f"Criteria Score: {sum(criteria_results)}/{len(criteria_results)}")
-    print(f"Pitfalls Score: {sum(pitfall_results)}/{len(pitfall_results)}\n")
+    logging.info(f"Overall Score: {passed_checks}/{total_checks} ({pass_percentage:.1f}%)")
+    logging.info(f"Criteria Score: {sum(criteria_results)}/{len(criteria_results)}")
+    logging.info(f"Pitfalls Score: {sum(pitfall_results)}/{len(pitfall_results)}\n")
 
-    print("1. General Feedback:")
-    print("-" * 40)
+    logging.info("1. General Feedback:")
+    logging.info("-" * 40)
     general = generate_general_feedback(thesis_text)
-    print(general)
+    logging.info(general)
 
-    print("\n2. Specific Changes Needed:")
-    print("-" * 40)
+    logging.info("\n2. Specific Changes Needed:")
+    logging.info("-" * 40)
     specific = generate_checklist(thesis_text, include_why=True)
-    print(specific)
+    logging.info(specific)
 
     return {
         "general_feedback": general,

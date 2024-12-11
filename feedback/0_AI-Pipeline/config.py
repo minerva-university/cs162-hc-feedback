@@ -30,11 +30,11 @@ COMMON_PITFALLS = [
 
 
 def get_criteria():
-    logger.debug("Fetching evaluation criteria")
+    logger.info("Fetching evaluation criteria")
     return GUIDED_REFLECTION_CRITERIA
 
 def get_pitfalls():
-    logger.debug("Fetching common pitfalls")
+    logger.info("Fetching common pitfalls")
     return COMMON_PITFALLS
 
 
@@ -46,7 +46,7 @@ def get_single_criterion(index):
 def initialize_evaluation_model():
     """Initialize model optimized for Pass/Fail evaluation"""
     try:
-        logger.debug("Configuring evaluation model")
+        logger.info("Configuring evaluation model")
         api_key = carl_api_key
         logger.debug(f"API Key present: {bool(api_key)}")
         genai.configure(api_key=api_key)
@@ -58,17 +58,17 @@ def initialize_evaluation_model():
                 max_output_tokens=1,  # Minimal tokens for Pass/Fail
             ),
         )
-        logger.debug("Evaluation model initialized successfully")
+        logger.info("Evaluation model initialized successfully")
         return model
     except Exception as e:
-        logger.debug(f"Error initializing evaluation model: {e}")
+        logger.error(f"Error initializing evaluation model: {e}")
         return None
 
 
 def initialize_analysis_model():
     """Initialize model for detailed analysis"""
     try:
-        logger.debug("Configuring analysis model")
+        logger.info("Configuring analysis model")
         api_key = carl_api_key
         logger.debug(f"API Key present: {bool(api_key)}")
         genai.configure(api_key=api_key)
@@ -80,8 +80,8 @@ def initialize_analysis_model():
                 max_output_tokens=8000,  # Higher tokens for detailed analysis
             ),
         )
-        logger.debug("Analysis model initialized successfully")
+        logger.info("Analysis model initialized successfully")
         return model
     except Exception as e:
-        logger.debug(f"Error initializing analysis model: {e}")
+        logger.error(f"Error initializing analysis model: {e}")
         return None

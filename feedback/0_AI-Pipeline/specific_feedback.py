@@ -32,7 +32,7 @@ Thesis: {thesis_text}
         response = analysis_model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
-        print(f"Error generating specific feedback: {e}")
+        logger.error(f"Error generating specific feedback: {e}")
         return None
 
 def evaluate_pitfall(thesis_text, pitfall):
@@ -49,7 +49,7 @@ Thesis: {thesis_text}
         response = analysis_model.generate_content(prompt)
         return response.text.strip().upper() == "PASS"
     except Exception as e:
-        print(f"Error in pitfall evaluation: {e}")
+        logger.error(f"Error in pitfall evaluation: {e}")
         return False
 
 def format_feedback_for_display(feedback_items, include_why=False):
@@ -68,23 +68,23 @@ def generate_checklist(thesis_text, include_why=False):
     feedback_items = []
 
     # Check guided criteria
-    logger.debug("\nEvaluating guided criteria...")
+    logger.info("\nEvaluating guided criteria...")
     evaluation_results = evaluate_all_criteria(thesis_text)
     criteria = get_criteria()
 
     for i, (criterion, passed) in enumerate(zip(criteria, evaluation_results)):
         if not passed:
-            logger.debug(f"Generating feedback for failed criterion #{i+1}")
+            logger.info(f"Generating feedback for failed criterion #{i+1}")
             feedback = generate_specific_feedback_for_criterion(thesis_text, criterion)
             if feedback:
                 feedback_items.append(feedback)
 
     # Check pitfalls
-    logger.debug("\nEvaluating common pitfalls...")
+    logger.info("\nEvaluating common pitfalls...")
     pitfalls = get_pitfalls()
     for i, pitfall in enumerate(pitfalls):
         if not evaluate_pitfall(thesis_text, pitfall):
-            logger.debug(f"Generating feedback for failed pitfall #{i+1}")
+            logger.info(f"Generating feedback for failed pitfall #{i+1}")
             feedback = generate_specific_feedback_for_criterion(thesis_text, pitfall, "pitfall")
             if feedback:
                 feedback_items.append(feedback)

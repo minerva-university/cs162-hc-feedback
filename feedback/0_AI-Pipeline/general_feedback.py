@@ -1,4 +1,6 @@
 from config import initialize_analysis_model, get_criteria
+from logging_config import logger  # Import the shared logger or setup
+import logging
 
 model = initialize_analysis_model()
 
@@ -26,5 +28,5 @@ Thesis: {thesis_text}
         response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
-        print(f"Error in general feedback: {e}")
+        logger.error(f"Error in general feedback: {e}")
         return None
