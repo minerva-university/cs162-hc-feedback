@@ -1,5 +1,8 @@
 
 from config import initialize_evaluation_model, initialize_analysis_model
+from logging_config import logger  # Import the shared logger or setup
+import logging
+
 
 def main():
     logger.info("Testing Evaluation Model...")

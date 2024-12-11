@@ -2,6 +2,9 @@ from general_feedback import generate_general_feedback
 from specific_feedback import generate_checklist, evaluate_pitfall
 from evaluation import evaluate_all_criteria
 from config import get_criteria, get_pitfalls
+from logging_config import logger  # Import the shared logger or setup
+import logging
+
 
 
 def analyze_thesis(thesis_text):
