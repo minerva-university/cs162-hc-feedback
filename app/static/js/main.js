@@ -23,14 +23,19 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 async function loadHCExamples() {
-  try {
-      const response = await fetch("/api/hc-examples");
-      allExamples = await response.json();
+    try {
+      // Load HC data from the JSON file
+      const response = await fetch("../static/js/all_hc_data.json");
+      const data = await response.json();
+      
+      // Flatten the data structure (optional but recommended)
+      allExamples = Object.values(data).flat();
+  
       updateHCSelect(allExamples);
-  } catch (error) {
+    } catch (error) {
       console.error("Error loading HC examples:", error);
+    }
   }
-}
 
 function updateHCSelect(examples) {
   const select = document.getElementById("hcSelect");
@@ -67,24 +72,33 @@ async function showModal(modalId) {
   if (modalId === "footnoteModal") {
       try {
           const selectedHC = document.getElementById("hcSelect").value;
-          const response = await fetch(`/api/hc-example/${selectedHC}`);
-          const data = await response.json();
+
+          // Find the example in the allExamples array
+          const example = allExamples.find(ex => ex.hc_name === selectedHC);
+
+          if (!example) {
+              console.error("HC example not found:", selectedHC);
+              return; // Or show an error message in the modal
+          }
+
 
           const modalContent = modal.querySelector(".modal-content");
           modalContent.innerHTML = `
               <h2>Example: ${selectedHC}</h2>
               <div class="example-content">
                   <h3>General Example</h3>
-                  <p>${data.general_example}</p>
+                  <p>${example.general_example}</p>
               </div>
               <div class="footnote-content">
                   <h3>Footnote</h3>
-                  <p>${data.footnote}</p>
+                  <p>${example.footnote}</p>
               </div>
               <button onclick="hideModal('footnoteModal')" class="btn">Close</button>
           `;
+
+
       } catch (error) {
-          console.error("Error fetching example:", error);
+          console.error("Error showing example:", error);
       }
   }
   modal.classList.remove("hidden");
@@ -95,8 +109,9 @@ function hideModal(modalId) {
 }
 
 function showHandbookMessage() {
-  const handbookModal = document.getElementById("handbookModal");
-  handbookModal.classList.remove("hidden");
+    const selectedHC = document.getElementById("hcSelect").value;
+    const handbookURL = `https://my.minerva.edu/application/login/?next=/academics/hc-resources/hc-handbook/#${selectedHC.toLowerCase()}`; 
+    window.open(handbookURL, '_blank');
 }
 
 async function submitFeedback(event) {
