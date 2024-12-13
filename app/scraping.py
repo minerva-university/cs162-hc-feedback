@@ -9,8 +9,95 @@ from bs4 import BeautifulSoup
 import time
 import json
 
+HC_CATEGORIES = {
+    "COMPLEX_SYSTEMS": [
+        "levelsofanalysis",
+        "shapingbehavior",
+        "systemmapping",
+        "emergentproperties",
+        "complexcausality",
+        "networks",
+        "systemdynamics",
+        "negotiate",
+        "ethicalconsiderations",
+        "ethicalcourage",
+        "ethicaljudgment",
+        "conformity",
+        "differences",
+        "emotionaliq",
+        "leadprinciples",
+        "powerdynamics",
+        "responsibility",
+        "selfawareness",
+        "strategize",
+        "psychologicalexplanation",
+        "purpose",
+    ],
+    "FORMAL_ANALYSES": [
+        "algorithms",
+        "optimization",
+        "confidenceintervals",
+        "correlation",
+        "descriptivestats",
+        "distributions",
+        "probability",
+        "regression",
+        "significance",
+        "decisiontrees",
+        "utility",
+        "gametheory",
+        "variables",
+        "estimation",
+        "deduction",
+        "fallacies",
+        "induction",
+    ],
+    "MULTIMODAL_COMMUNICATIONS": [
+        "audience",
+        "composition",
+        "connotation",
+        "organization",
+        "professionalism",
+        "thesis",
+        "communicationdesign",
+        "expression",
+        "medium",
+        "multimedia",
+        "persuasion",
+        "designthinking",
+        "context",
+        "critique",
+        "interpretivelens",
+        "evidencebased",
+        "sourcequality",
+    ],
+    "EMPIRICAL_ANALYSES": [
+        "dataviz",
+        "casestudy",
+        "comparisongroups",
+        "interventionalstudy",
+        "interviewsurvey",
+        "observationalstudy",
+        "sampling",
+        "studyreplication",
+        "hypothesisdevelopment",
+        "modeling",
+        "analogies",
+        "constraints",
+        "heuristics",
+        "scienceoflearning",
+        "biasidentification",
+        "biasmitigation",
+        "breakitdown",
+        "gapanalysis",
+        "rightproblem",
+        "plausibility",
+        "testability",
+    ],
+}
 
-def login_and_scrape_selenium(login_url, target_url, username, password):
+
+def scrape_all_hcs(login_url, base_url, username, password):
     try:
         # Setup Chrome options
         chrome_options = Options()
@@ -23,12 +110,9 @@ def login_and_scrape_selenium(login_url, target_url, username, password):
         driver = webdriver.Chrome(options=chrome_options)
         wait = WebDriverWait(driver, 10)
 
-        # Step 1: Open the login page
-        print("Opening login page...")
-        driver.get(login_url)
-
-        # Step 2: Log in
+        # Step 1: Log in
         print("Logging in...")
+        driver.get(login_url)
         username_input = wait.until(EC.presence_of_element_located((By.NAME, "email")))
         password_input = driver.find_element(By.NAME, "password")
         username_input.send_keys(username)
@@ -38,82 +122,65 @@ def login_and_scrape_selenium(login_url, target_url, username, password):
         # Wait for redirection after login
         time.sleep(5)
 
-        # Step 3: Navigate to the target page
-        print("Navigating to the target page...")
-        driver.get(target_url)
-        time.sleep(5)  # Allow time for the page to load
+        # Initialize results dictionary
+        results = {category: [] for category in HC_CATEGORIES}
 
-        # Step 4: Parse the loaded page content
-        page_source = driver.page_source
-        soup = BeautifulSoup(page_source, "html.parser")
+        # Step 2: Scrape each HC
+        for category, hcs in HC_CATEGORIES.items():
+            print(f"Scraping category: {category}")
+            for hc in hcs:
+                target_url = f"{base_url}/{hc}/"
+                print(f"Scraping HC: {hc} at {target_url}")
 
-        # Debug: Save the HTML for inspection
-        with open("debug_output_selenium.html", "w", encoding="utf-8") as f:
-            f.write(soup.prettify())
-        print("HTML written to debug_output_selenium.html for inspection.")
+                # Navigate to the HC page
+                driver.get(target_url)
+                time.sleep(5)  # Allow time for the page to load
 
-        # Prepare data dictionary
-        data = {}
+                # Parse the page
+                page_source = driver.page_source
+                soup = BeautifulSoup(page_source, "html.parser")
 
-        # Step 5: Extract HC Name from the URL
-        hc_name = target_url.rstrip("/").split("/")[-1]
-        data["hc_name"] = hc_name
+                # Extract HC details
+                data = {"hc_name": hc, "cornerstone": category}
 
-        # General Example and Footnote
-        general_example_section = soup.find("p", id="hc_general_example")
-        if general_example_section:
-            general_example_content = general_example_section.get_text(strip=True)
-            data["general_example"] = general_example_content
+                # General Example and Footnote
+                general_example_section = soup.find("p", id="hc_general_example")
+                if general_example_section:
+                    general_example_content = general_example_section.get_text(
+                        strip=True
+                    )
+                    data["general_example"] = general_example_content
 
-            # Extract Footnote from the same section
-            footnote = general_example_section.find_next("em")
-            if footnote:
-                footnote_content = footnote.get_text(strip=True)
-                data["footnote"] = footnote_content
-            else:
-                data["footnote"] = "Not found"
-        else:
-            data["general_example"] = "Not found"
+                    # Extract Footnote
+                    footnote = general_example_section.find_next("em")
+                    if footnote:
+                        footnote_content = footnote.get_text(strip=True)
+                        data["footnote"] = footnote_content
+                    else:
+                        data["footnote"] = "Not found"
+                else:
+                    data["general_example"] = "Not found"
 
-        # Step 7: Extract Cornerstone Introduction
-        cornerstone_section = soup.find("h4", string="Cornerstone Introduction")
-        if cornerstone_section:
-            cornerstone_content = cornerstone_section.find_next("div").get_text(
-                strip=True
-            )
-            cornerstone_content = (
-                cornerstone_content.replace("Class:", "").split("|")[0].strip()
-            )  # Keep only the first part
-            data["cornerstone"] = cornerstone_content
-        else:
-            data["cornerstone"] = "Not found"
+                # Cornerstone Introduction
+                cornerstone_section = soup.find("h4", string="Cornerstone Introduction")
+                if cornerstone_section:
+                    cornerstone_content = cornerstone_section.find_next("div").get_text(
+                        strip=True
+                    )
+                    cornerstone_content = (
+                        cornerstone_content.replace("Class:", "").split("|")[0].strip()
+                    )
+                    data["cornerstone"] = cornerstone_content
+                else:
+                    data["cornerstone"] = "Not found"
 
-        # Step 8: Extract Guided Reflection Questions
-        guided_reflection_section = soup.find("h4", string="Guided Reflection")
-        if guided_reflection_section:
-            guided_reflection_questions = [
-                li.get_text(strip=True)
-                for li in guided_reflection_section.find_next("ul").find_all("li")
-            ]
-            data["guided_reflection"] = guided_reflection_questions
-        else:
-            data["guided_reflection"] = []
+                # Append to results
+                results[category].append(data)
 
-        # Step 9: Extract Common Pitfalls
-        common_pitfalls_section = soup.find("h4", string="Common Pitfalls")
-        if common_pitfalls_section:
-            common_pitfalls = [
-                li.get_text(strip=True)
-                for li in common_pitfalls_section.find_next("ul").find_all("li")
-            ]
-            data["common_pitfalls"] = common_pitfalls
-        else:
-            data["common_pitfalls"] = []
-
-        # Save data to a JSON file
-        with open("scraped_data.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
-        print("Scraped data saved to scraped_data.json")
+        # Save results to JSON file
+        with open("all_hcs_data.json", "w", encoding="utf-8") as f:
+            json.dump(results, f, indent=4, ensure_ascii=False)
+        print("All HC data saved to all_hcs_data.json")
 
     except NoSuchWindowException:
         print("Browser window closed unexpectedly. Restarting the WebDriver...")
@@ -124,10 +191,10 @@ def login_and_scrape_selenium(login_url, target_url, username, password):
             driver.quit()
 
 
-# Replace with your login and target URLs
+# Replace with your login URL and base URL
 login_url = "https://my.minerva.edu/application/login/"
-target_url = "https://my.minerva.edu/academics/hc-resources/hc-handbook/audience/"
+base_url = "https://my.minerva.edu/academics/hc-resources/hc-handbook"
 username = "your_email"
-password = "your_pasword"
+password = "your_password"
 
-login_and_scrape_selenium(login_url, target_url, username, password)
+scrape_all_hcs(login_url, base_url, username, password)
