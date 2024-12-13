@@ -2,6 +2,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Initialize any necessary components
   initializeSearch();
+  initializeGeneralFeedback();
 });
 
 function initializeSearch() {
@@ -11,6 +12,55 @@ function initializeSearch() {
     console.log("Searching for:", e.target.value);
   });
 }
+
+function initializeGeneralFeedback() {
+  const feedbackToggle = document.getElementById("generalFeedbackToggle");
+  const feedbackContainer = document.getElementById("generalFeedbackContainer");
+
+  feedbackToggle.addEventListener("click", async function () {
+    if (feedbackContainer.classList.contains("hidden")) {
+      // Show feedback
+      await fetchGeneralFeedback();
+      feedbackContainer.classList.remove("hidden");
+      feedbackToggle.textContent = "Hide General Feedback";
+    } else {
+      // Hide feedback
+      feedbackContainer.classList.add("hidden");
+      feedbackToggle.textContent = "View General Feedback";
+    }
+  });
+}
+async function fetchGeneralFeedback() {
+  const feedbackContainer = document.getElementById("generalFeedbackContainer");
+
+  try {
+    const response = await fetch("/api/general_feedback", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const feedback = await response.json();
+      displayGeneralFeedback(feedback);
+    } else {
+      console.error("Failed to fetch general feedback");
+      feedbackContainer.innerHTML = `<p>Error fetching feedback. Please try again later.</p>`;
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    feedbackContainer.innerHTML = `<p>An error occurred while fetching feedback.</p>`;
+  }
+}
+function displayGeneralFeedback(feedback) {
+  const feedbackText = document.getElementById("generalFeedbackText");
+  const feedbackScore = document.getElementById("generalFeedbackScore");
+
+  feedbackText.textContent = feedback.text || "No feedback available.";
+  feedbackScore.textContent = `Score: ${feedback.score || "N/A"}`;
+}
+
 
 function showModal(modalId) {
   document.getElementById(modalId).classList.remove("hidden");

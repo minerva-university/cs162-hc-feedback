@@ -2,12 +2,10 @@ from flask import Blueprint, render_template, jsonify, request
 
 main = Blueprint("main", __name__)
 
-
 @main.route("/")
 def index():
     """Render the main page of the application."""
     return render_template("index.html")
-
 
 @main.route("/api/feedback", methods=["POST"])
 def get_feedback():
@@ -34,3 +32,16 @@ def get_feedback():
         ],
     }
     return jsonify(feedback)
+
+@main.route("/api/general_feedback", methods=["GET"])
+def general_feedback():
+    """
+    API endpoint to provide general feedback.
+    Returns JSON with general feedback text and score.
+    """
+    # Mock general feedback data - replace with actual implementation
+    general_feedback = {
+        "text": "Your application demonstrates excellent structure and clarity.",
+        "score": 95,
+    }
+    return jsonify(general_feedback)
