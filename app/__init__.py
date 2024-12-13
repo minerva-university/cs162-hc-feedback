@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from app.models import db
 from app.data import HC_EXAMPLES_DATA
 
-
 def create_app():
     """
     Create and configure the Flask application.
@@ -27,8 +26,11 @@ def create_app():
 
     # Register routes
     from app.routes import main
-
     app.register_blueprint(main)
+
+    # Create the tables if they don't exist yet
+    with app.app_context():
+        db.create_all()
 
     return app
 

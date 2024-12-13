@@ -9,3 +9,4 @@ class HCExample(db.Model):
     cornerstone = db.Column(db.String(100), nullable=False)
     general_example = db.Column(db.Text, nullable=False)
     footnote = db.Column(db.Text, nullable=False)
+

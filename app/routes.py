@@ -34,5 +34,3 @@ def get_hc_examples():
             for ex in examples
         ]
     )
-
-
