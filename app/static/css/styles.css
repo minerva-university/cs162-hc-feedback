@@ -21,13 +21,15 @@
     text-align: left;
     margin-bottom: 2rem;
     padding: 1rem;
-    background-color: #f5f5f5; /* Light background to make it stand out */
+    background-color: #f5f5f5;
+    /* Light background to make it stand out */
     border-radius: 8px;
 }
 
 .welcome-section h1 {
     font-size: 2rem;
-    color: var(--primary-color); /* Use primary color for coherence */
+    color: var(--primary-color);
+    /* Use primary color for coherence */
     margin: 0;
     font-weight: bold;
 }
@@ -45,23 +47,28 @@
     border-radius: 4px;
     font-size: 1rem;
 }
+
 /* HC List Styles */
-.hc-list {
+.cornerstone-select {
     margin-top: 1.5rem;
     font-size: 1rem;
-    font-family: Arial, sans-serif; /* Ensures consistent font */
+    font-family: Arial, sans-serif;
+    /* Ensures consistent font */
 }
 
 .hc-item {
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--border-color);
 }
+
 .hc-feedback-description {
     font-size: 1rem;
-    color: var(--secondary-color); /* Matches secondary color */
+    color: var(--secondary-color);
+    /* Matches secondary color */
     margin-top: 0.5rem;
     line-height: 1.5;
 }
+
 /* Terms Container Styles */
 .terms-container {
     margin: 1rem 0;
@@ -80,15 +87,13 @@
     display: flex;
     gap: 1rem;
     margin-bottom: 1.5rem;
-    justify-content: space-between; /* This will distribute buttons evenly */
-    flex-wrap: wrap;  /* This allows buttons to wrap on smaller screens */
+    width: 100%;
 }
 
-/* Add this to make buttons take equal width */
 .action-buttons .btn {
     flex: 1;
     text-align: center;
-    min-width: 150px; /* Ensures buttons don't get too narrow */
+    white-space: nowrap;
 }
 
 .btn {
@@ -202,53 +207,27 @@
 }
 
 .modal-content {
-    background-color: white;
+    background-color: #ffffff;
     padding: 2rem;
-    border-radius: 4px;
-    max-width: 500px;
-    width: 90%;
+    border-radius: 8px;
+    width: 60vw;
+    min-height: 35vh;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* Specific styles for handbook modal */
+#handbookModal .modal-content {
+    width: 400px;
+    min-height: auto;
+    text-align: center;
 }
 
 .hidden {
     display: none;
 }
-/* Handbook Modal Styles */
-.modal-content {
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 8px;
-    max-width: 400px;
-    width: 90%;
-    text-align: center; /* Center-align text */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow */
-}
-
-.modal-content h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.modal-content p {
-    font-size: 1rem;
-    color: var(--secondary-color); /* Adjust color if needed */
-    margin-bottom: 1.5rem;
-}
-
-.modal-content .btn {
-    background-color: var(--primary-color);
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border: none;
-    text-transform: uppercase; /* Optional for styling */
-}
-
-.modal-content .btn:hover {
-    opacity: 0.9;
-}
-
 
 /* Tooltip Styles */
 .tooltip {
@@ -277,10 +256,51 @@
     visibility: visible;
 }
 
-/* Universal Font Style */
-* {
-    font-family: Arial, sans-serif; /* Replace with desired font */
-    font-size: 1rem; /* Set default font size */
-    box-sizing: border-box; /* Ensure consistent sizing for all elements */
+/* Example and Footnote Modal Styles */
+.example-content,
+.footnote-content {
+    margin-bottom: 1.5rem;
+    text-align: left;
 }
 
+.example-content h3,
+.footnote-content h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.example-content p,
+.footnote-content p {
+    line-height: 1.6;
+    color: var(--secondary-color);
+    font-size: 0.95rem;
+}
+
+/* Universal Font Style */
+* {
+    font-family: Arial, sans-serif;
+    /* Replace with desired font */
+    font-size: 1rem;
+    /* Set default font size */
+    box-sizing: border-box;
+    /* Ensure consistent sizing for all elements */
+}
+
+.hc-select, .cornerstone-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: white;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.5em;
+    padding-right: 2rem;
+  }
