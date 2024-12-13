@@ -80,6 +80,15 @@
     display: flex;
     gap: 1rem;
     margin-bottom: 1.5rem;
+    justify-content: space-between; /* This will distribute buttons evenly */
+    flex-wrap: wrap;  /* This allows buttons to wrap on smaller screens */
+}
+
+/* Add this to make buttons take equal width */
+.action-buttons .btn {
+    flex: 1;
+    text-align: center;
+    min-width: 150px; /* Ensures buttons don't get too narrow */
 }
 
 .btn {
