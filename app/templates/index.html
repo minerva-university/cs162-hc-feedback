@@ -1,17 +1,37 @@
 <!-- templates/index.html -->
 {% extends "base.html" %}
 {% block content %}
+
+
 <div class="container">
-    <!-- Search Bar -->
-    <div class="search-container">
-        <input type="text" id="searchHCs" placeholder="Search HCs" class="search-input">
+    <!-- HC List Section -->
+    <div id="hcList" class="hc-list">
+        <h2>HCs Feedback</h2>
+        <p class="hc-feedback-description">
+            This tool will help you receive feedback on your applications and gain a better understanding of HC
+            processes.
+        </p>
+
+        <!-- Add cornerstone filter -->
+        <select id="cornerstoneFilter" class="cornerstone-select">
+            <option value="">All Cornerstones</option>
+            <option value="Empirical Analyses">Empirical Analyses</option>
+            <option value="Complex Systems">Complex Systems</option>
+            <option value="Formal Analyses">Formal Analyses</option>
+            <option value="Multimodal Communications">Multimodal Communications</option>
+        </select>
+
+        <select id="hcSelect" class="hc-select">
+            <option value="">Select an HC example...</option>
+        </select>
     </div>
+
 
     <!-- Action Buttons -->
     <div class="action-buttons">
         <button onclick="showModal('footnoteModal')" class="btn">Example Footnote</button>
         <button onclick="showModal('contextModal')" class="btn">Add Context</button>
-        <a href="#" class="btn" id="handbookLink">View in HC Handbook</a>
+        <a href="https://my.minerva.edu/application/login/?next=/academics/hc-resources/hc-handbook/" class="btn" id="handbookLink" target="_blank">View in HC Handbook</a>
     </div>
 
     <!-- Feedback Form -->
@@ -41,9 +61,7 @@
     <!-- Modals -->
     <div id="footnoteModal" class="modal hidden">
         <div class="modal-content">
-            <h2>Example Footnote</h2>
-            <p>Example footnote content goes here...</p>
-            <button onclick="hideModal('footnoteModal')" class="btn">Close</button>
+            <!-- Content will be populated by JavaScript -->
         </div>
     </div>
 
@@ -54,5 +72,14 @@
             <button onclick="hideModal('contextModal')" class="btn">Close</button>
         </div>
     </div>
+    <!-- Handbook Message Modal -->
+    <div id="handbookModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Notice</h2>
+            <p>You will be directed to the HC Handbook.</p>
+            <button onclick="hideModal('handbookModal')" class="btn">Close</button>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
