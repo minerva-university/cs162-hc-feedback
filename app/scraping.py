@@ -9,6 +9,130 @@ from bs4 import BeautifulSoup
 import time
 import json
 
+
+def login_and_scrape_all_hcs(login_url, hc_categories, username, password):
+    try:
+        # Setup Chrome options
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--window-size=1920,1080")
+
+        # Initialize the WebDriver
+        driver = webdriver.Chrome(options=chrome_options)
+        wait = WebDriverWait(driver, 10)
+
+        # Step 1: Open the login page
+        print("Opening login page...")
+        driver.get(login_url)
+
+        # Step 2: Log in
+        print("Logging in...")
+        username_input = wait.until(EC.presence_of_element_located((By.NAME, "email")))
+        password_input = driver.find_element(By.NAME, "password")
+        username_input.send_keys(username)
+        password_input.send_keys(password)
+        password_input.send_keys(Keys.RETURN)
+
+        # Wait for redirection after login
+        time.sleep(5)
+
+        # Prepare data dictionary to hold all HCs
+        all_data = {}
+
+        # Loop through each category and HC
+        for category, hc_list in hc_categories.items():
+            all_data[category] = []
+            for hc in hc_list:
+                target_url = (
+                    f"https://my.minerva.edu/academics/hc-resources/hc-handbook/{hc}/"
+                )
+                print(f"Navigating to {target_url}...")
+                driver.get(target_url)
+                time.sleep(5)  # Allow time for the page to load
+
+                # Parse the page content
+                page_source = driver.page_source
+                soup = BeautifulSoup(page_source, "html.parser")
+
+                # Prepare data dictionary for current HC
+                data = {"hc_name": hc}
+
+                # General Example and Footnote
+                general_example_section = soup.find("p", id="hc_general_example")
+                if general_example_section:
+                    general_example_content = general_example_section.get_text(
+                        strip=True
+                    )
+                    data["general_example"] = general_example_content
+
+                    # Extract Footnote from the same section
+                    footnote = general_example_section.find_next("em")
+                    if footnote:
+                        footnote_content = footnote.get_text(strip=True)
+                        data["footnote"] = footnote_content
+                    else:
+                        data["footnote"] = "Not found"
+                else:
+                    data["general_example"] = "Not found"
+
+                # Extract Cornerstone Introduction
+                cornerstone_section = soup.find("h4", string="Cornerstone Introduction")
+                if cornerstone_section:
+                    cornerstone_content = cornerstone_section.find_next("div").get_text(
+                        strip=True
+                    )
+                    cornerstone_content = (
+                        cornerstone_content.replace("Class:", "").split("|")[0].strip()
+                    )  # Keep only the first part
+                    data["cornerstone"] = cornerstone_content
+                else:
+                    data["cornerstone"] = "Not found"
+
+                # Extract Guided Reflection Questions
+                guided_reflection_section = soup.find("h4", string="Guided Reflection")
+                if guided_reflection_section:
+                    guided_reflection_questions = [
+                        li.get_text(strip=True)
+                        for li in guided_reflection_section.find_next("ul").find_all(
+                            "li"
+                        )
+                    ]
+                    data["guided_reflection"] = guided_reflection_questions
+                else:
+                    data["guided_reflection"] = []
+
+                # Extract Common Pitfalls
+                common_pitfalls_section = soup.find("h4", string="Common Pitfalls")
+                if common_pitfalls_section:
+                    common_pitfalls = [
+                        li.get_text(strip=True)
+                        for li in common_pitfalls_section.find_next("ul").find_all("li")
+                    ]
+                    data["common_pitfalls"] = common_pitfalls
+                else:
+                    data["common_pitfalls"] = []
+
+                # Append HC data to the respective category
+                all_data[category].append(data)
+
+        # Save all data to a JSON file
+        with open("all_hc_data.json", "w", encoding="utf-8") as f:
+            json.dump(all_data, f, indent=4, ensure_ascii=False)
+        print("All HCs data saved to all_hc_data.json")
+
+    except NoSuchWindowException:
+        print("Browser window closed unexpectedly. Restarting the WebDriver...")
+    except WebDriverException as e:
+        print(f"WebDriver error occurred: {e}")
+    finally:
+        if "driver" in locals():
+            driver.quit()
+
+
+# Example usage
+login_url = "https://my.minerva.edu/application/login/"
 HC_CATEGORIES = {
     "COMPLEX_SYSTEMS": [
         "levelsofanalysis",
@@ -95,106 +219,7 @@ HC_CATEGORIES = {
         "testability",
     ],
 }
-
-
-def scrape_all_hcs(login_url, base_url, username, password):
-    try:
-        # Setup Chrome options
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--window-size=1920,1080")
-
-        # Initialize the WebDriver
-        driver = webdriver.Chrome(options=chrome_options)
-        wait = WebDriverWait(driver, 10)
-
-        # Step 1: Log in
-        print("Logging in...")
-        driver.get(login_url)
-        username_input = wait.until(EC.presence_of_element_located((By.NAME, "email")))
-        password_input = driver.find_element(By.NAME, "password")
-        username_input.send_keys(username)
-        password_input.send_keys(password)
-        password_input.send_keys(Keys.RETURN)
-
-        # Wait for redirection after login
-        time.sleep(5)
-
-        # Initialize results dictionary
-        results = {category: [] for category in HC_CATEGORIES}
-
-        # Step 2: Scrape each HC
-        for category, hcs in HC_CATEGORIES.items():
-            print(f"Scraping category: {category}")
-            for hc in hcs:
-                target_url = f"{base_url}/{hc}/"
-                print(f"Scraping HC: {hc} at {target_url}")
-
-                # Navigate to the HC page
-                driver.get(target_url)
-                time.sleep(5)  # Allow time for the page to load
-
-                # Parse the page
-                page_source = driver.page_source
-                soup = BeautifulSoup(page_source, "html.parser")
-
-                # Extract HC details
-                data = {"hc_name": hc, "cornerstone": category}
-
-                # General Example and Footnote
-                general_example_section = soup.find("p", id="hc_general_example")
-                if general_example_section:
-                    general_example_content = general_example_section.get_text(
-                        strip=True
-                    )
-                    data["general_example"] = general_example_content
-
-                    # Extract Footnote
-                    footnote = general_example_section.find_next("em")
-                    if footnote:
-                        footnote_content = footnote.get_text(strip=True)
-                        data["footnote"] = footnote_content
-                    else:
-                        data["footnote"] = "Not found"
-                else:
-                    data["general_example"] = "Not found"
-
-                # Cornerstone Introduction
-                cornerstone_section = soup.find("h4", string="Cornerstone Introduction")
-                if cornerstone_section:
-                    cornerstone_content = cornerstone_section.find_next("div").get_text(
-                        strip=True
-                    )
-                    cornerstone_content = (
-                        cornerstone_content.replace("Class:", "").split("|")[0].strip()
-                    )
-                    data["cornerstone"] = cornerstone_content
-                else:
-                    data["cornerstone"] = "Not found"
-
-                # Append to results
-                results[category].append(data)
-
-        # Save results to JSON file
-        with open("all_hcs_data.json", "w", encoding="utf-8") as f:
-            json.dump(results, f, indent=4, ensure_ascii=False)
-        print("All HC data saved to all_hcs_data.json")
-
-    except NoSuchWindowException:
-        print("Browser window closed unexpectedly. Restarting the WebDriver...")
-    except WebDriverException as e:
-        print(f"WebDriver error occurred: {e}")
-    finally:
-        if "driver" in locals():
-            driver.quit()
-
-
-# Replace with your login URL and base URL
-login_url = "https://my.minerva.edu/application/login/"
-base_url = "https://my.minerva.edu/academics/hc-resources/hc-handbook"
 username = "your_email"
 password = "your_password"
 
-scrape_all_hcs(login_url, base_url, username, password)
+login_and_scrape_all_hcs(login_url, HC_CATEGORIES, username, password)
