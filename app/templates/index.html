@@ -6,7 +6,6 @@
     <h1>Welcome, Student</h1>
 </div>
 
-
 <div class="container">
     <!-- HC List Section -->
     <div id="hcList" class="hc-list">
@@ -30,17 +29,15 @@
         </select>
     </div>
 
-
     <!-- Action Buttons -->
     <div class="action-buttons">
-        <button onclick="showModal('footnoteModal')" class="btn">Example Footnote</button>
-        <button onclick="showModal('contextModal')" class="btn">Add Context</button>
-        <a href="#" class="btn" id="handbookLink" onclick="showHandbookMessage()">View in HC Handbook</a>
-
+        <button class="btn">Example Footnote</button>
+        <button class="btn">Add Context</button>
+        <a href="#" class="btn" id="handbookLink">View in HC Handbook</a>
     </div>
 
     <!-- Feedback Form -->
-    <form id="feedbackForm" class="feedback-form" onsubmit="submitFeedback(event)">
+    <form id="feedbackForm" class="feedback-form">
         <textarea id="assignmentText" placeholder="Assignment Portion to be feedback-ed here..."
             class="feedback-textarea"></textarea>
 
@@ -62,29 +59,5 @@
             <div id="actionableSteps" class="steps-list"></div>
         </div>
     </div>
-
-    <!-- Modals -->
-    <div id="footnoteModal" class="modal hidden">
-        <div class="modal-content">
-            <!-- Content will be populated by JavaScript -->
-        </div>
-    </div>
-
-    <div id="contextModal" class="modal hidden">
-        <div class="modal-content">
-            <h2>Add Context</h2>
-            <p>Context information goes here...</p>
-            <button onclick="hideModal('contextModal')" class="btn">Close</button>
-        </div>
-    </div>
-    <!-- Handbook Message Modal -->
-    <div id="handbookModal" class="modal hidden">
-        <div class="modal-content">
-            <h2>Notice</h2>
-            <p>You will be directed to the HC Handbook.</p>
-            <button onclick="hideModal('handbookModal')" class="btn">Close</button>
-        </div>
-    </div>
-
 </div>
 {% endblock %}
