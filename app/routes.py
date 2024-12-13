@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, jsonify, request
+from app.models import db, HCExample  # Add db import here
 
 main = Blueprint("main", __name__)
 
@@ -7,6 +8,8 @@ def index():
     """Render the main page of the application."""
     return render_template("index.html")
 
+#feature/HFC-5/add-button-design
+@main.route("/api/feedback", methods=["POST"])
 @main.route("/api/feedback", methods=["POST"])
 def get_feedback():
     """
@@ -33,6 +36,7 @@ def get_feedback():
     }
     return jsonify(feedback)
 
+
 @main.route("/api/general_feedback", methods=["GET"])
 def general_feedback():
     """
@@ -45,3 +49,35 @@ def general_feedback():
         "score": 95,
     }
     return jsonify(general_feedback)
+
+
+@main.route("/api/hc-example/<hc_name>")
+def get_hc_example(hc_name):
+    """
+    API endpoint to fetch a specific HC example by name.
+    """
+    example = HCExample.query.filter_by(hc_name=hc_name).first()
+    if example:
+        return jsonify(
+            {"general_example": example.general_example, "footnote": example.footnote}
+        )
+    return jsonify({"error": "Example not found"}), 404
+
+
+@main.route("/api/hc-examples")
+def get_hc_examples():
+    """
+    API endpoint to fetch all HC examples.
+    """
+    examples = HCExample.query.all()
+    return jsonify(
+        [
+            {
+                "hc_name": ex.hc_name,
+                "cornerstone": ex.cornerstone,
+                "general_example": ex.general_example,
+                "footnote": ex.footnote,
+            }
+            for ex in examples
+        ]
+    )

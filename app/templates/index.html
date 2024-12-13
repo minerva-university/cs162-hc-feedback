@@ -2,29 +2,30 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="welcome-section">
-    <h1>Welcome, Student</h1>
-</div>
-
 
 <div class="container">
     <!-- HC List Section -->
     <div id="hcList" class="hc-list">
         <h2>HCs Feedback</h2>
         <p class="hc-feedback-description">
-            This tool will help you receive feedback on your applications and gain a better understanding of HC processes.
+            This tool will help you receive feedback on your applications and gain a better understanding of HC
+            processes.
         </p>
-        <ul id="hcItems">
-        <!-- Example HCs; replace with actual HC items -->
-            <li class="hc-item">Example: #networks</li>
 
-        </ul>
+        <!-- Add cornerstone filter -->
+        <select id="cornerstoneFilter" class="cornerstone-select">
+            <option value="">All Cornerstones</option>
+            <option value="Empirical Analyses">Empirical Analyses</option>
+            <option value="Complex Systems">Complex Systems</option>
+            <option value="Formal Analyses">Formal Analyses</option>
+            <option value="Multimodal Communications">Multimodal Communications</option>
+        </select>
+
+        <select id="hcSelect" class="hc-select">
+            <option value="">Select an HC example...</option>
+        </select>
     </div>
 
-    <!-- Search Bar -->
-    <div class="search-container">
-        <input type="text" id="searchHCs" placeholder="Search HCs" class="search-input">
-    </div>
 
     <!-- Action Buttons -->
     <div class="action-buttons">
@@ -71,9 +72,7 @@
     <!-- Modals -->
     <div id="footnoteModal" class="modal hidden">
         <div class="modal-content">
-            <h2>Example Footnote</h2>
-            <p>Example footnote content goes here...</p>
-            <button onclick="hideModal('footnoteModal')" class="btn">Close</button>
+            <!-- Content will be populated by JavaScript -->
         </div>
     </div>
 
