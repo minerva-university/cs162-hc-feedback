@@ -1,4 +1,4 @@
-from feedback.ai.config import initialize_evaluation_model, get_single_criterion, get_criteria
+from feedback.ai.config import initialize_evaluation_model
 from feedback.ai.logging_config import logger  # Import the shared logger or setup
 import logging
 

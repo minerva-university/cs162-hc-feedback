@@ -1,8 +1,6 @@
 from feedback.ai.config import (
     initialize_analysis_model,
-    initialize_evaluation_model,
-    get_criteria,
-    get_pitfalls
+    initialize_evaluation_model
 )
 from feedback.ai.evaluation import evaluate_all_criteria
 from feedback.ai.logging_config import logger  # Import the shared logger or setup
@@ -63,13 +61,13 @@ def format_feedback_for_display(feedback_items, include_why=False):
         display_items.append('\n'.join(lines))
     return '\n\n'.join(display_items)
 
-def generate_checklist(assignment_text, include_why=False):
+def generate_checklist(assignment_text, criteria, pitfalls, include_why=False):
     """Generate a checklist with optional Why explanations"""
     feedback_items = []
 
     # Check guided criteria
     logger.info("\nEvaluating guided criteria...")
-    criteria = get_criteria()
+    criteria = criteria
     evaluation_results = evaluate_all_criteria(assignment_text, criteria)
     
     for i, (criterion, passed) in enumerate(zip(criteria, evaluation_results)):
@@ -81,7 +79,7 @@ def generate_checklist(assignment_text, include_why=False):
 
     # Check pitfalls
     logger.info("\nEvaluating common pitfalls...")
-    pitfalls = get_pitfalls()
+    pitfalls = pitfalls
     for i, pitfall in enumerate(pitfalls):
         if not evaluate_pitfall(assignment_text, pitfall):
             logger.info(f"Generating feedback for failed pitfall #{i+1}")

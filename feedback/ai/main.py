@@ -4,9 +4,7 @@ from feedback.ai.specific_feedback import generate_checklist, evaluate_pitfall
 from feedback.ai.evaluation import evaluate_all_criteria  # Assuming you adapt this for all HCs
 from feedback.ai.config import (
     initialize_analysis_model,
-    initialize_evaluation_model,
-    get_criteria,  # Now gets criteria based on HC
-    get_pitfalls  # Now gets pitfalls based on HC
+    initialize_evaluation_model
 )
 from feedback.ai.logging_config import logger
 import json
@@ -73,12 +71,12 @@ def analyze_hc(assignment_text, hc_name, guided_reflection, common_pitfalls):  #
 
     logging.info("1. General Feedback:")
     logging.info("-" * 40)
-    general = generate_general_feedback(assignment_text)
+    general = generate_general_feedback(assignment_text, criteria)
     logging.info(general)
 
     logging.info("\n2. Specific Changes Needed:")
     logging.info("-" * 40)
-    specific = generate_checklist(assignment_text, include_why=True)
+    specific = generate_checklist(assignment_text, criteria, pitfalls, include_why=True)
     logging.info(specific)
 
     return {

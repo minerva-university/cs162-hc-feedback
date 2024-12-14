@@ -1,12 +1,12 @@
-from feedback.ai.config import initialize_analysis_model, get_criteria
+from feedback.ai.config import initialize_analysis_model
 from feedback.ai.logging_config import logger  # Import the shared logger or setup
 import logging
 
 model = initialize_analysis_model()
 
 
-def generate_general_feedback(assignment_text):
-    criteria_list = get_criteria()
+def generate_general_feedback(assignment_text, criteria):
+    criteria_list = criteria
     numbered_criteria = "\n".join(
         f"{i+1}. {criterion}" for i, criterion in enumerate(criteria_list)
     )

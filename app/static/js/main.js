@@ -129,6 +129,7 @@ async function submitFeedback(event) {
 
     try {
         const example = allExamples.find(ex => ex.hc_name === selectedHC);
+        console.log("Selected HC:", example);
         if (!example) {
             console.error("HC example not found:", selectedHC);
             alert("Please select an HC.");
@@ -184,12 +185,12 @@ function displayFeedback(feedback) {
 
         stepElement.innerHTML = `
             <input type="checkbox" ${step.completed ? 'checked' : ''}>
-            <span>${step.text}</span>
+            <p><strong>Change:</strong> ${step.change}</p>  </p> <p><strong>From:</strong> ${step.from}</p><p><strong>To:</strong> ${step.to}</p>
             <div class="tooltip">
                 ℹ️
-                <span class="tooltip-text">${step.tooltip}</span>
+                <span class="tooltip-text">${step.why}</span>
             </div>
-        `;
+        `; // Added elements for change, from, and to
 
         stepsContainer.appendChild(stepElement);
     });
@@ -198,13 +199,15 @@ function displayFeedback(feedback) {
 
 function parseSpecificFeedback(feedbackString) {
     const steps = [];
-    const regex = /- \[(x| )] Change: (.+)\n  From: .+\n  To: (.+)\n  Why: (.+)/g;
+    const regex = /- \[(x| )] Change: (.+)\n  From: (.+)\n  To: (.+)\n  Why: (.+)/g; // Modified regex
     let match;
 
     while ((match = regex.exec(feedbackString)) !== null) {
         steps.push({
-            text: match[3],
-            tooltip: match[4],
+            change: match[2].trim(), // Capture "Change"
+            from: match[3].trim(),   // Capture "From"
+            to: match[4].trim(),     // Capture "To"
+            why: match[5].trim(),     // Capture "Why"
             completed: match[1] === 'x'
         });
     }
