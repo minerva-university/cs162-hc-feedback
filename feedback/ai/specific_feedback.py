@@ -63,15 +63,15 @@ def format_feedback_for_display(feedback_items, include_why=False):
         display_items.append('\n'.join(lines))
     return '\n\n'.join(display_items)
 
-def generate_checklist(assignment_text, include_why=False):
+def generate_checklist(assignment_text, guided_reflection=None, common_pitfalls=None, include_why=False):
     """Generate a checklist with optional Why explanations"""
     feedback_items = []
 
     # Check guided criteria
     logger.info("\nEvaluating guided criteria...")
-    criteria = get_criteria()
+    criteria = get_criteria(guided_reflection)
     evaluation_results = evaluate_all_criteria(assignment_text, criteria)
-    
+
     for i, (criterion, passed) in enumerate(zip(criteria, evaluation_results)):
         if not passed:
             logger.info(f"Generating feedback for failed criterion #{i+1}")
@@ -81,7 +81,7 @@ def generate_checklist(assignment_text, include_why=False):
 
     # Check pitfalls
     logger.info("\nEvaluating common pitfalls...")
-    pitfalls = get_pitfalls()
+    pitfalls = get_pitfalls(common_pitfalls)
     for i, pitfall in enumerate(pitfalls):
         if not evaluate_pitfall(assignment_text, pitfall):
             logger.info(f"Generating feedback for failed pitfall #{i+1}")

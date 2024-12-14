@@ -1,41 +1,19 @@
 import os
-from feedback.ai.logging_config import logger  # Import the shared logger or setup
+from feedback.ai.logging_config import logger
 import logging
 import google.generativeai as genai
 
 carl_api_key = "AIzaSyAG_a2dwMt2TYxpozHuIPHD_Y_ZLFRumaA"
 
-# Thesis evaluation criteria
-GUIDED_REFLECTION_CRITERIA = [
-    "Have you ensured your thesis is substantial, precise, relevant, arguable, concise, and sets up the forthcoming evidence?",
-    "Have you ensured your thesis is appropriate in terms of scope?",
-    "Have you ensured your thesis is supported by the evidence of your work?",
-    "Have you ensured your thesis references what type of evidence you will use to give the reader an idea of how you will support your claim?",
-    "Have you ensured your thesis is a one to two sentence statement of your main claim?",
-    "When applicable, have you provided a detailed justification for a thesis critique or suggested a non-trivial improvement?",
-    "Have you revised your thesis when you've finished a complete first draft to tailor it to the evidence and reasoning you provided?",
-]
-
-# Common thesis pitfalls
-COMMON_PITFALLS = [
-    "The application's thesis is too vague or opened-ended.",
-    "The application's thesis is too long or mentions too many topics.",
-    "The application's thesis does not take a stance.",
-    "The application's thesis states a claim with no reasoning. For example, the thesis says A is B but does not mention A is B because of X, Y, and Z.",
-    "The application's thesis provides a claim and reasoning but neglects to mention the importance of the claim. For example, the thesis states A is B because of X, Y, and Z but does not include that A is B because of X, Y, and Z, which is important for D.",
-    "The application has a strong central idea, but the thesis is not stated clearly or easily found within the paper.",
-    "The application lives within a paper that has yet to identify its main points, which makes it hard to write a precise thesis.",
-    "The thesis is not revised throughout the process of writing and researching, so it does not match the scope or accomplishments of the work.",
-]
-
-
-def get_criteria():
+def get_criteria(guided_reflection=None):
+    """Get criteria from passed parameter"""
     logger.info("Fetching evaluation criteria")
-    return GUIDED_REFLECTION_CRITERIA
+    return guided_reflection if guided_reflection else []
 
-def get_pitfalls():
+def get_pitfalls(common_pitfalls=None):
+    """Get pitfalls from passed parameter"""
     logger.info("Fetching common pitfalls")
-    return COMMON_PITFALLS
+    return common_pitfalls if common_pitfalls else []
 
 
 def get_single_criterion(index):

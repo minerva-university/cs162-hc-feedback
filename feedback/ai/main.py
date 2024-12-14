@@ -45,22 +45,21 @@ def load_hc_data(hc_name):
     return None
 
 
-def analyze_hc(assignment_text, hc_name, guided_reflection, common_pitfalls):  # Renamed and updated parameters
+def analyze_hc(assignment_text, hc_name, guided_reflection, common_pitfalls):
     """Analyzes assignment text based on the chosen HC."""
     logger.info(f"\n=== HC Analysis: {hc_name} ===")
     logger.info(f'Analyzing: "{assignment_text}"\n')
-    
+
     hc_data = load_hc_data(hc_name)
 
     if not hc_data:
         logger.error(f"HC data not found for: {hc_name}")
         return {"error": f"HC '{hc_name}' not found"}
 
-    criteria = guided_reflection
-    pitfalls = common_pitfalls
+    criteria = get_criteria(guided_reflection)
+    pitfalls = get_pitfalls(common_pitfalls)
 
-    criteria_results = evaluate_all_criteria(assignment_text, criteria)  # Update this to work for HC criteria
-
+    criteria_results = evaluate_all_criteria(assignment_text, criteria)
     pitfall_results = [evaluate_pitfall(assignment_text, pitfall) for pitfall in pitfalls]
 
     total_checks = len(criteria_results) + len(pitfall_results)
@@ -78,7 +77,12 @@ def analyze_hc(assignment_text, hc_name, guided_reflection, common_pitfalls):  #
 
     logging.info("\n2. Specific Changes Needed:")
     logging.info("-" * 40)
-    specific = generate_checklist(assignment_text, include_why=True)
+    specific = generate_checklist(
+        assignment_text,
+        guided_reflection=guided_reflection,
+        common_pitfalls=common_pitfalls,
+        include_why=True
+    )
     logging.info(specific)
 
     return {
