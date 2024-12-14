@@ -23,9 +23,4 @@ def api_feedback():
         
         feedback = analyze_hc(assignment_text, hc_name, guided_reflection, common_pitfalls) #pass the relevant info
 
-        print("carl is stupid")
-        print(guided_reflection)
-        print("We love carl")
-        print(common_pitfalls)
-
     return jsonify(feedback)
