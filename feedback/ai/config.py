@@ -1,9 +1,9 @@
 import os
-from logging_config import logger  # Import the shared logger or setup
+from feedback.ai.logging_config import logger  # Import the shared logger or setup
 import logging
 import google.generativeai as genai
 
-carl_api_key = ""
+carl_api_key = "AIzaSyAG_a2dwMt2TYxpozHuIPHD_Y_ZLFRumaA"
 
 # Thesis evaluation criteria
 GUIDED_REFLECTION_CRITERIA = [

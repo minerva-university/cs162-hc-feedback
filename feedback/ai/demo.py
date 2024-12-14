@@ -21,21 +21,17 @@ def run_demo():
 
     results = []
     for name, thesis in test_theses:
-        logger.info(f"\n{'='*80}")(f"\n{'='*80}")
-        logger.info(f"\n{'='*80}")(f"Example: {name}")
-        logger.info(f"\n{'='*80}")(f"{'='*80}")
+        logger.info(f"\n{'='*80}\nExample: {name}\n{'='*80}") # Corrected line
         result = analyze_thesis(thesis)
         results.append((name, result["score"]["total"]))
         input("\nPress Enter to continue...")
 
-    logger.info(f"\n{'='*80}")("\n=== Final Score Comparison ===")
-    logger.info(f"\n{'='*80}")("-" * 40)
+    logger.info(f"\n{'='*80}\n=== Final Score Comparison ===\n{'='*40}")  # Corrected line
     for name, score in results:
-        logger.info(f"\n{'='*80}")(f"{name}: {score:.1f}%")
+        logger.info(f"\n{'='*80}\n{name}: {score:.1f}%") # Corrected line
 
 
 if __name__ == "__main__":
-    logger.info(f"\n{'='*80}")("Welcome to the Thesis Feedback Demo")
-    logger.info(f"\n{'='*80}")("This demo will analyze and compare three different thesis statements")
+    logger.info(f"\n{'='*80}\nWelcome to the Thesis Feedback Demo\n{'='*80}") # Corrected line
     input("Press Enter to begin...")
     run_demo()
