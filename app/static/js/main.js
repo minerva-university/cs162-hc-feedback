@@ -38,7 +38,6 @@ async function loadHCExamples() {
 
 }
 
-
 function updateHCSelect(examples) {
   const select = document.getElementById("hcSelect");
   const footnoteButton = document.getElementById("footnoteButton"); // Add this line
@@ -78,21 +77,6 @@ function filterHCs() {
 
     updateHCSelect(filteredExamples);
 }
-
-function updateHCSelect(examples) {
-    const select = document.getElementById("hcSelect");
-    select.innerHTML = '<option value="">Select an HC example...</option>';
-
-    examples.forEach(example => {
-        const option = document.createElement("option");
-        option.value = example.hc_name;
-        option.textContent = example.hc_name;
-        option.setAttribute('data-footnote', example.footnote);
-        select.appendChild(option);
-    });
-}
-
-// ...existing code...
 
 async function showModal(modalId) {
   const modal = document.getElementById(modalId);
