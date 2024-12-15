@@ -134,6 +134,11 @@
     margin-top: 2rem;
 }
 
+#footnoteButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* Submit Button Styles */
 .submit-btn {
     padding: 0.75rem 1.5rem;
