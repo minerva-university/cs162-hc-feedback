@@ -14,32 +14,36 @@ def format_cornerstone_name(name):
 
 @main.route("/")
 def index():
+    logger.info("Fetching all cornerstones for index page.")
     cornerstones = Cornerstone.query.all()
     formatted_cornerstones = [
         {"name": cs.name, "display_name": format_cornerstone_name(cs.name)}
         for cs in cornerstones
     ]
+    logger.info(f"Formatted cornerstones: {formatted_cornerstones}")
     return render_template("index.html", cornerstones=formatted_cornerstones)
 
 
 @main.route("/api/hcs/<cornerstone>")
 def get_hcs(cornerstone):
-    # Handle case-insensitive matching and normalize spaces
+    logger.info(f"Fetching HCs for cornerstone: {cornerstone}")
     cornerstone_name = cornerstone.strip().upper().replace("_", " ")
     cornerstone_obj = Cornerstone.query.filter(
         Cornerstone.name.ilike(f"%{cornerstone_name}%")
     ).first_or_404()
+    logger.info(f"Found cornerstone: {cornerstone_obj.name}")
 
     hcs = [
         {"name": hc.name, "footnote": hc.footnote, "cornerstone": cornerstone_obj.name}
         for hc in cornerstone_obj.hcs
     ]
+    logger.info(f"HCs for cornerstone {cornerstone_obj.name}: {hcs}")
     return jsonify(hcs)
 
 
 @main.route("/api/hcs")
 def get_all_hcs():
-    """Get all HCs grouped by cornerstone"""
+    logger.info("Fetching all HCs grouped by cornerstone.")
     cornerstones = Cornerstone.query.all()
     data = {}
     for cornerstone in cornerstones:
@@ -55,6 +59,7 @@ def get_all_hcs():
             for hc in cornerstone.hcs
         ]
         data[cornerstone.name] = hcs
+    logger.info(f"All HCs data: {data}")
     return jsonify(data)
 
 
@@ -62,11 +67,14 @@ def get_all_hcs():
 def api_feedback():
     try:
         with current_app.app_context():
+            logger.info("Received feedback request.")
             if not request.is_json:
+                logger.error("Request is not JSON.")
                 return jsonify({"error": "Request must be JSON"}), 400
 
             data = request.get_json()
             if data is None:
+                logger.error("Invalid JSON in request.")
                 return jsonify({"error": "Invalid JSON"}), 400
 
             assignment_text = data.get("text")
@@ -76,8 +84,10 @@ def api_feedback():
             context = data.get("context", {})  # Get context information
 
             if not all([assignment_text, hc_name, guided_reflection, common_pitfalls]):
+                logger.error("Missing required fields in request.")
                 return jsonify({"error": "Missing required fields"}), 400
 
+            logger.info(f"Analyzing HC: {hc_name} with context: {context}")
             feedback = analyze_hc(
                 assignment_text,
                 hc_name,
@@ -85,6 +95,7 @@ def api_feedback():
                 common_pitfalls,
                 context,  # Pass context to analysis
             )
+            logger.info(f"Feedback generated: {feedback}")
             return jsonify(feedback)
     except Exception as e:
         logger.error(f"Error processing feedback request: {str(e)}")
@@ -94,14 +105,19 @@ def api_feedback():
 @main.route("/api/precheck", methods=["POST"])
 def api_precheck():
     try:
+        logger.info("Received precheck request.")
         if not request.is_json:
+            logger.error("Request is not JSON.")
             return jsonify({"error": "Request must be JSON"}), 400
 
         data = request.get_json()
         if not data or "text" not in data:
+            logger.error("Missing text field in request.")
             return jsonify({"error": "Missing text field"}), 400
 
+        logger.info(f"Checking input quality for text: {data['text']}")
         is_meaningful, feedback = check_input_quality(data["text"])
+        logger.info(f"Input quality check result: {is_meaningful}, feedback: {feedback}")
         return jsonify({"is_meaningful": is_meaningful, "feedback": feedback})
     except Exception as e:
         logger.error(f"Error in precheck: {str(e)}")

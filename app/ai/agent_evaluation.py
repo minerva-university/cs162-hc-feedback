@@ -4,14 +4,12 @@ import logging
 
 model = initialize_evaluation_model()
 
-
-def evaluate_criterion(assignment_text, criterion): # Removed criterion_index
+def evaluate_criterion(assignment_text, criterion):
     """
     Evaluate a thesis against a single criterion
     Returns: True for Pass, False for Fail
     """
-
-# ideally {criteria} instead of "thesis" evaluator
+    logger.info(f"Evaluating criterion: {criterion}")
     prompt = f"""
 You are a strict evaluator. Evaluate this response against ONE criterion:
 "{criterion}"
@@ -22,19 +20,21 @@ Response: {assignment_text}
 """
     try:
         response = model.generate_content(prompt)
+        logger.info(f"Criterion evaluation result: {response.text.strip().upper()}")
         return response.text.strip().upper() == "PASS"
     except Exception as e:
         logger.error(f"Error in criterion evaluation: {e}")
         return False
 
-
-def evaluate_all_criteria(assignment_text, criteria):  # Updated parameters
+def evaluate_all_criteria(assignment_text, criteria):
     """
     Evaluate a thesis against all criteria provided
     Returns: List of boolean results (True for Pass, False for Fail)
     """
+    logger.info("Evaluating all criteria.")
     results = []
     for criterion in criteria:
-        result = evaluate_criterion(assignment_text, criterion) # Updated this line
+        result = evaluate_criterion(assignment_text, criterion)
         results.append(result)
+    logger.info(f"All criteria evaluation results: {results}")
     return results
