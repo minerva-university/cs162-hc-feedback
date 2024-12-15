@@ -118,12 +118,15 @@
 
 .feedback-textarea {
     width: 100%;
-    min-height: 150px;
+    height: 200px;
+    resize: none;  /* Disable manual resizing */
     padding: 0.75rem;
     border: 1px solid var(--border-color);
     border-radius: 4px;
     margin-bottom: 1rem;
     font-size: 1rem;
+    line-height: 1.5;
+    overflow-y: auto; /* Add scrollbar for overflow */
 }
 
 /* Feedback Results */
