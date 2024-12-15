@@ -73,12 +73,17 @@ def api_feedback():
             hc_name = data.get("hc_name")
             guided_reflection = data.get("guided_reflection")
             common_pitfalls = data.get("common_pitfalls")
+            context = data.get("context", {})  # Get context information
 
             if not all([assignment_text, hc_name, guided_reflection, common_pitfalls]):
                 return jsonify({"error": "Missing required fields"}), 400
 
             feedback = analyze_hc(
-                assignment_text, hc_name, guided_reflection, common_pitfalls
+                assignment_text,
+                hc_name,
+                guided_reflection,
+                common_pitfalls,
+                context,  # Pass context to analysis
             )
             return jsonify(feedback)
     except Exception as e:

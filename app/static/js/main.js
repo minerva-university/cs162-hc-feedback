@@ -1,6 +1,12 @@
 // Store all examples globally for filtering
 let allExamples = [];
 
+// Add global context state
+let currentContext = {
+  assignmentDescription: "",
+  existingContext: "",
+};
+
 document.addEventListener("DOMContentLoaded", function () {
   loadHCExamples();
 
@@ -171,6 +177,7 @@ async function submitFeedback(event) {
         hc_name: selectedHC, // Send the selected HC name to the backend
         guided_reflection: example.guided_reflection, // Send the guided reflection criteria
         common_pitfalls: example.common_pitfalls, // Send the common pitfalls
+        context: currentContext, // Add context information
       }),
     });
 
@@ -238,4 +245,20 @@ function parseSpecificFeedback(feedbackString) {
     });
   }
   return steps;
+}
+
+function saveContext() {
+  currentContext = {
+    assignmentDescription: document.getElementById("assignmentDescription")
+      .value,
+    existingContext: document.getElementById("existingContext").value,
+  };
+  hideModal("contextModal");
+
+  // Update the context button to show status
+  const contextButton = document.querySelector(
+    'button[onclick="showModal(\'contextModal\')"]'
+  );
+  contextButton.classList.add("has-context");
+  contextButton.textContent = "Update Context";
 }
