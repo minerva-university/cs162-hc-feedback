@@ -5,18 +5,50 @@ from .ai.logging_config import logger
 
 main = Blueprint("main", __name__)
 
+def format_cornerstone_name(name):
+    """Format cornerstone name for display (e.g., 'MULTIMODAL_COMMUNICATIONS' -> 'Multimodal Communications')"""
+    return name.replace('_', ' ').title()
 
 @main.route("/")
 def index():
     cornerstones = Cornerstone.query.all()
-    return render_template("index.html", cornerstones=cornerstones)
+    formatted_cornerstones = [{'name': cs.name, 'display_name': format_cornerstone_name(cs.name)}
+                            for cs in cornerstones]
+    return render_template("index.html", cornerstones=formatted_cornerstones)
 
 
 @main.route("/api/hcs/<cornerstone>")
 def get_hcs(cornerstone):
-    cornerstone_obj = Cornerstone.query.filter_by(name=cornerstone).first_or_404()
-    hcs = [{"name": hc.name, "footnote": hc.footnote} for hc in cornerstone_obj.hcs]
+    # Handle case-insensitive matching and normalize spaces
+    cornerstone_name = cornerstone.strip().upper().replace('_', ' ')
+    cornerstone_obj = Cornerstone.query.filter(
+        Cornerstone.name.ilike(f"%{cornerstone_name}%")
+    ).first_or_404()
+
+    hcs = [{
+        "name": hc.name,
+        "footnote": hc.footnote,
+        "cornerstone": cornerstone_obj.name
+    } for hc in cornerstone_obj.hcs]
     return jsonify(hcs)
+
+
+@main.route("/api/hcs")
+def get_all_hcs():
+    """Get all HCs grouped by cornerstone"""
+    cornerstones = Cornerstone.query.all()
+    data = {}
+    for cornerstone in cornerstones:
+        hcs = [{
+            "hc_name": hc.name,
+            "footnote": hc.footnote,
+            "general_example": hc.general_example,
+            "cornerstone": cornerstone.name,
+            "guided_reflection": [gr.text for gr in hc.guided_reflections],
+            "common_pitfalls": [cp.text for cp in hc.common_pitfalls]
+        } for hc in cornerstone.hcs]
+        data[cornerstone.name] = hcs
+    return jsonify(data)
 
 
 @main.route("/api/feedback", methods=["POST"])
