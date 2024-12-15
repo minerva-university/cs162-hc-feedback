@@ -48,6 +48,22 @@
         <button type="submit" class="submit-btn">REQUEST FEEDBACK</button>
     </form>
 
+    <!-- Progress Section -->
+    <div id="progressSection" class="progress-section hidden">
+        <div class="phase-indicator">
+            <div class="phase-step">Input Analysis</div>
+            <div class="phase-step">Content Validation</div>
+            <div class="phase-step">HC Processing</div>
+            <div class="phase-step">Feedback Generation</div>
+        </div>
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <p id="progressStatus" class="progress-status">Processing...</p>
+        <button id="toggleLog" class="toggle-log-btn">Show Processing Details</button>
+        <div id="processingLog" class="processing-log hidden"></div>
+    </div>
+
     <!-- Feedback Results -->
     <div id="feedbackResults" class="feedback-results hidden">
         <p id="feedbackText" class="feedback-text"></p>
