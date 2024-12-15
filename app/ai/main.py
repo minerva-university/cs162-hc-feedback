@@ -12,6 +12,7 @@ evaluation_model = initialize_evaluation_model()
 # Cache for HC data
 hc_data_cache = {}
 
+
 def load_hc_data(hc_name):
     """Loads HC data from database, using cache."""
     if hc_name in hc_data_cache:
@@ -26,7 +27,7 @@ def load_hc_data(hc_name):
                 "footnote": hc.footnote,
                 "general_example": hc.general_example,
                 "guided_reflection": [gr.text for gr in hc.guided_reflections],
-                "common_pitfalls": [cp.text for cp in hc.common_pitfalls]
+                "common_pitfalls": [cp.text for cp in hc.common_pitfalls],
             }
             hc_data_cache[hc_name] = hc_data
             return hc_data
@@ -37,6 +38,7 @@ def load_hc_data(hc_name):
 
     logger.error(f"HC data not found for: {hc_name}")
     return None
+
 
 def analyze_hc(assignment_text, hc_name, guided_reflection, common_pitfalls):
     """Analyzes assignment text based on the chosen HC."""
@@ -51,9 +53,7 @@ def analyze_hc(assignment_text, hc_name, guided_reflection, common_pitfalls):
     criteria = guided_reflection
     pitfalls = common_pitfalls
 
-    criteria_results = evaluate_all_criteria(
-        assignment_text, criteria
-    )
+    criteria_results = evaluate_all_criteria(assignment_text, criteria)
 
     pitfall_results = [
         evaluate_pitfall(assignment_text, pitfall) for pitfall in pitfalls
