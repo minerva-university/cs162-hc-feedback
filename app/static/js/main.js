@@ -35,8 +35,37 @@ async function loadHCExamples() {
     } catch (error) {
         console.error("Error loading HC examples:", error);
     }
+
 }
 
+
+function updateHCSelect(examples) {
+  const select = document.getElementById("hcSelect");
+  const footnoteButton = document.getElementById("footnoteButton"); // Add this line
+
+  select.innerHTML = '<option value="">Select an HC example...</option>';
+
+  examples.forEach(example => {
+      const option = document.createElement("option");
+      option.value = example.hc_name;
+      option.textContent = `${example.hc_name}`;
+      select.appendChild(option);
+  });
+
+  // Add change event listener
+  select.addEventListener("change", (e) => {
+      if (e.target.value) {
+          console.log("Selected HC:", e.target.value);
+          footnoteButton.disabled = false; // Enable button when HC is selected
+      } else {
+          footnoteButton.disabled = true; // Disable button when no HC is selected
+      }
+  });
+
+  // Disable footnote button by default
+  footnoteButton.disabled = true;
+}
+  
 function filterHCs() {
     const selectedCornerstone = document.getElementById("cornerstoneFilter").value;
 
