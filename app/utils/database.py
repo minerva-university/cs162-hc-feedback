@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from .models import db, Cornerstone, HC, GuidedReflection, CommonPitfall
+from ..models import db, Cornerstone, HC, GuidedReflection, CommonPitfall
 
 def init_db():
     """Create all database tables"""

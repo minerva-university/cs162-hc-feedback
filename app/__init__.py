@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from .ai.ai_config import initialize_analysis_model, initialize_evaluation_model
 from .models import db, Cornerstone  # Add Cornerstone import
-from .database import init_db, populate_data
+from .utils.database import init_db, populate_data
 
 def create_app():
     """

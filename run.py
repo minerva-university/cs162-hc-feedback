@@ -6,7 +6,7 @@ app = create_app()
 @app.cli.command("init-db")
 def init_db_command():
     """Clear existing data and create new tables."""
-    from app.database import init_db, populate_data
+    from app.utils.database import init_db, populate_data
     with app.app_context():
         init_db()
         populate_data()
