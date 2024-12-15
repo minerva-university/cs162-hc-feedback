@@ -18,6 +18,7 @@ evaluation_model = initialize_evaluation_model()
 # Cache for HC data (avoids repeated file reads)
 hc_data_cache = {}
 
+
 def load_hc_data(hc_name):
     """Loads HC data from online JSON, using cache."""
     if hc_name in hc_data_cache:
@@ -25,7 +26,7 @@ def load_hc_data(hc_name):
 
     try:
         # Fetch JSON from the online source
-        response = requests.get("https://jsonkeeper.com/b/3MIM", verify=False)
+        response = requests.get("https://jsonkeeper.com/b/CCDQ", verify=False)
         response.raise_for_status()  # Raise HTTPError for bad responses
         all_hc_data = response.json()  # Parse JSON response
 
@@ -43,7 +44,9 @@ def load_hc_data(hc_name):
     return None
 
 
-def analyze_hc(assignment_text, hc_name, guided_reflection, common_pitfalls):  # Renamed and updated parameters
+def analyze_hc(
+    assignment_text, hc_name, guided_reflection, common_pitfalls
+):  # Renamed and updated parameters
     """Analyzes assignment text based on the chosen HC."""
     logger.info(f"\n=== HC Analysis: {hc_name} ===")
     logger.info(f'Analyzing: "{assignment_text}"\n')
@@ -57,15 +60,21 @@ def analyze_hc(assignment_text, hc_name, guided_reflection, common_pitfalls):  #
     criteria = guided_reflection
     pitfalls = common_pitfalls
 
-    criteria_results = evaluate_all_criteria(assignment_text, criteria)  # Update this to work for HC criteria
+    criteria_results = evaluate_all_criteria(
+        assignment_text, criteria
+    )  # Update this to work for HC criteria
 
-    pitfall_results = [evaluate_pitfall(assignment_text, pitfall) for pitfall in pitfalls]
+    pitfall_results = [
+        evaluate_pitfall(assignment_text, pitfall) for pitfall in pitfalls
+    ]
 
     total_checks = len(criteria_results) + len(pitfall_results)
     passed_checks = sum(criteria_results) + sum(pitfall_results)
     pass_percentage = (passed_checks / total_checks) * 100
 
-    logging.info(f"Overall Score: {passed_checks}/{total_checks} ({pass_percentage:.1f}%)")
+    logging.info(
+        f"Overall Score: {passed_checks}/{total_checks} ({pass_percentage:.1f}%)"
+    )
     logging.info(f"Criteria Score: {sum(criteria_results)}/{len(criteria_results)}")
     logging.info(f"Pitfalls Score: {sum(pitfall_results)}/{len(pitfall_results)}\n")
 
