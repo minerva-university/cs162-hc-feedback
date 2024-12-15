@@ -1,5 +1,6 @@
 from .ai_config import initialize_analysis_model
 from .logging_config import logger
+import logging
 
 model = initialize_analysis_model()
 

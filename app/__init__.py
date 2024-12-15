@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from .ai.ai_config import initialize_analysis_model, initialize_evaluation_model
 from .models import db, Cornerstone  # Add Cornerstone import
 from .utils.database import init_db, populate_data
+from .ai.logging_config import logger
 
 def create_app():
     """
@@ -10,6 +11,7 @@ def create_app():
     Returns:
         Flask: Configured Flask application instance
     """
+    logger.info("Creating Flask application.")
     app = Flask(__name__)
 
     # Database configuration
@@ -23,18 +25,24 @@ def create_app():
 
     # Initialize database
     db.init_app(app)
+    logger.info("Database initialized.")
 
     with app.app_context():
         # Create tables
         init_db()
+        logger.info("Tables created.")
 
         # Check if database is empty and populate if needed
         if not Cornerstone.query.first():
             populate_data()
+            logger.info("Database populated with initial data.")
+        else:
+            logger.info("Database already populated.")
 
     # Register routes
     from app.routes import main
 
     app.register_blueprint(main)
+    logger.info("Routes registered.")
 
     return app
