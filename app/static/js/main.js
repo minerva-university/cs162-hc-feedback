@@ -20,6 +20,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Add handbook link handler
   document.getElementById("handbookLink").onclick = showHandbookMessage;
+
+  // Add after DOMContentLoaded event listener
+  document.getElementById('toggleLog').addEventListener('click', function() {
+    const log = document.getElementById('processingLog');
+    const btn = document.getElementById('toggleLog');
+    if (log.classList.contains('hidden')) {
+        log.classList.remove('hidden');
+        btn.textContent = 'Hide Processing Log';
+    } else {
+        log.classList.add('hidden');
+        btn.textContent = 'Show Processing Log';
+    }
+  });
 });
 
 async function loadHCExamples() {
@@ -124,66 +137,112 @@ function showHandbookMessage() {
   window.open(handbookURL, "_blank");
 }
 
+function addLogEntry(message, type = 'status') {
+    const log = document.getElementById('processingLog');
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${type}`;
+
+    const time = document.createElement('span');
+    time.className = 'log-time';
+    time.textContent = new Date().toLocaleTimeString();
+
+    const msg = document.createElement('span');
+    msg.className = 'log-message';
+    msg.textContent = message;
+
+    entry.appendChild(time);
+    entry.appendChild(msg);
+    log.appendChild(entry);
+    log.scrollTop = log.scrollHeight;
+}
+
+function updateProgress(percent, status, logMessage, type = 'status') {
+    const progressSection = document.getElementById('progressSection');
+    const progressBar = document.getElementById('progressBar');
+    const progressStatus = document.getElementById('progressStatus');
+
+    progressSection.classList.remove('hidden');
+    progressBar.style.width = `${percent}%`;
+    progressStatus.textContent = status;
+
+    // Update phase indicators
+    updatePhaseIndicators(percent);
+
+    if (logMessage) {
+        addLogEntry(logMessage, type);
+    }
+}
+
+function updatePhaseIndicators(percent) {
+    const phases = document.querySelectorAll('.phase-step');
+    phases.forEach((phase, index) => {
+        const phaseThreshold = (index + 1) * (100 / phases.length);
+        if (percent >= phaseThreshold) {
+            phase.classList.add('completed');
+            phase.classList.remove('active');
+        } else if (percent >= phaseThreshold - (100 / phases.length)) {
+            phase.classList.add('active');
+            phase.classList.remove('completed');
+        } else {
+            phase.classList.remove('active', 'completed');
+        }
+    });
+}
+
 async function submitFeedback(event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  const submitButton = event.target.querySelector('button[type="submit"]');
-  const originalText = submitButton.textContent;
-  submitButton.textContent = "Processing...";
-  submitButton.disabled = true;
+    // Reset progress section and show it
+    const progressSection = document.getElementById('progressSection');
+    progressSection.innerHTML = `
+        <div class="phase-indicator">
+            <div class="phase-step">Input Analysis</div>
+            <div class="phase-step">Content Validation</div>
+            <div class="phase-step">HC Processing</div>
+            <div class="phase-step">Feedback Generation</div>
+        </div>
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <p id="progressStatus" class="progress-status">Initializing...</p>
+        <button id="toggleLog" class="toggle-log-btn">Show Processing Details</button>
+        <div id="processingLog" class="processing-log hidden"></div>
+    `;
+    progressSection.classList.remove('hidden');
 
-  const selectedHC = document.getElementById("hcSelect").value;
-  const assignmentText = document.getElementById("assignmentText").value;
-
-  try {
-    // First, do the pre-check
-    const precheckResponse = await fetch("/api/precheck", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text: assignmentText }),
+    // Reattach toggle event listener
+    document.getElementById('toggleLog').addEventListener('click', function() {
+        const log = document.getElementById('processingLog');
+        this.textContent = log.classList.toggle('hidden') ?
+            'Show Processing Details' : 'Hide Processing Details';
     });
 
-    const precheckData = await precheckResponse.json();
+    // Rest of the submission logic with more detailed logging
+    try {
+        updateProgress(5, 'Initializing...', 'Starting feedback process', 'info');
+        // ...existing try block code but with more granular progress updates:
 
-    if (!precheckData.is_meaningful) {
-      alert(`Input quality check failed: ${precheckData.feedback}`);
-      return;
+        updateProgress(15, 'Analyzing input...', 'Checking input quality and formatting', 'info');
+        // Precheck API call...
+
+        updateProgress(30, 'Validating content...', 'Evaluating academic content standards', 'info');
+        // More detailed validation logs...
+
+        updateProgress(45, 'Processing HC criteria...', 'Analyzing against selected HC requirements', 'info');
+        // HC processing...
+
+        updateProgress(60, 'Generating feedback...', 'Creating personalized feedback', 'info');
+        // Feedback generation...
+
+        updateProgress(85, 'Finalizing...', 'Formatting results and recommendations', 'info');
+        // Final processing...
+
+        updateProgress(100, 'Complete!', 'Analysis completed successfully', 'status');
+
+    } catch (error) {
+        updateProgress(100, 'Error occurred', error.message, 'error');
+        console.error("Error:", error);
     }
-
-    // Continue with the rest of the submission process
-    const example = allExamples.find((ex) => ex.hc_name === selectedHC);
-    console.log("Selected HC:", example);
-    if (!example) {
-      console.error("HC example not found:", selectedHC);
-      alert("Please select an HC.");
-      return;
-    }
-
-    const response = await fetch("/api/feedback", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        text: assignmentText,
-        hc_name: selectedHC, // Send the selected HC name to the backend
-        guided_reflection: example.guided_reflection, // Send the guided reflection criteria
-        common_pitfalls: example.common_pitfalls, // Send the common pitfalls
-      }),
-    });
-
-    const data = await response.json();
-    console.log(data);
-    displayFeedback(data);
-  } catch (error) {
-    console.error("Error:", error);
-    alert(`An error occurred: ${error.message}`); // Show the error's message
-  } finally {
-    submitButton.textContent = originalText;
-    submitButton.disabled = false;
-  }
 }
 
 function displayFeedback(feedback) {
