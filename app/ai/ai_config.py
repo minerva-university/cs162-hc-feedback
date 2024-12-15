@@ -5,7 +5,7 @@ from pathlib import Path
 from .logging_config import logger  # Import the shared logger or setup
 import logging
 
-gemini_model = genai.GenerativeModel('gemini-1.5-pro')
+gemini_model = genai.GenerativeModel('gemini-1.5-flash')
 
 # Get the project root directory
 project_root = Path(__file__).parent.parent.parent

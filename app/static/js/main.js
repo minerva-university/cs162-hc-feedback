@@ -22,15 +22,15 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("handbookLink").onclick = showHandbookMessage;
 
   // Add after DOMContentLoaded event listener
-  document.getElementById('toggleLog').addEventListener('click', function() {
-    const log = document.getElementById('processingLog');
-    const btn = document.getElementById('toggleLog');
-    if (log.classList.contains('hidden')) {
-        log.classList.remove('hidden');
-        btn.textContent = 'Hide Processing Log';
+  document.getElementById("toggleLog").addEventListener("click", function () {
+    const log = document.getElementById("processingLog");
+    const btn = document.getElementById("toggleLog");
+    if (log.classList.contains("hidden")) {
+      log.classList.remove("hidden");
+      btn.textContent = "Hide Processing Log";
     } else {
-        log.classList.add('hidden');
-        btn.textContent = 'Show Processing Log';
+      log.classList.add("hidden");
+      btn.textContent = "Show Processing Log";
     }
   });
 });
@@ -137,64 +137,73 @@ function showHandbookMessage() {
   window.open(handbookURL, "_blank");
 }
 
-function addLogEntry(message, type = 'status') {
-    const log = document.getElementById('processingLog');
-    const entry = document.createElement('div');
-    entry.className = `log-entry ${type}`;
+function addLogEntry(message, type = "status", subphase = "") {
+  const log = document.getElementById("processingLog");
+  const entry = document.createElement("div");
+  entry.className = `log-entry ${type}`;
 
-    const time = document.createElement('span');
-    time.className = 'log-time';
-    time.textContent = new Date().toLocaleTimeString();
+  const time = document.createElement("span");
+  time.className = "log-time";
+  time.textContent = new Date().toLocaleTimeString([], { hour12: false });
 
-    const msg = document.createElement('span');
-    msg.className = 'log-message';
-    msg.textContent = message;
+  const msg = document.createElement("span");
+  msg.className = "log-message";
 
-    entry.appendChild(time);
-    entry.appendChild(msg);
-    log.appendChild(entry);
-    log.scrollTop = log.scrollHeight;
+  // Add subphase prefix if provided
+  const prefix = subphase ? `[${subphase}] ` : "";
+  msg.innerHTML = `${prefix}${message}`;
+
+  entry.appendChild(time);
+  entry.appendChild(msg);
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
 }
 
-function updateProgress(percent, status, logMessage, type = 'status') {
-    const progressSection = document.getElementById('progressSection');
-    const progressBar = document.getElementById('progressBar');
-    const progressStatus = document.getElementById('progressStatus');
+function updateProgress(percent, status, logMessage, type = "status") {
+  const progressSection = document.getElementById("progressSection");
+  const progressBar = document.getElementById("progressBar");
+  const progressStatus = document.getElementById("progressStatus");
 
-    progressSection.classList.remove('hidden');
-    progressBar.style.width = `${percent}%`;
-    progressStatus.textContent = status;
+  progressSection.classList.remove("hidden");
+  progressBar.style.width = `${percent}%`;
+  progressStatus.textContent = status;
 
-    // Update phase indicators
-    updatePhaseIndicators(percent);
+  // Update phase indicators
+  updatePhaseIndicators(percent);
 
-    if (logMessage) {
-        addLogEntry(logMessage, type);
-    }
+  if (logMessage) {
+    addLogEntry(logMessage, type);
+  }
 }
 
 function updatePhaseIndicators(percent) {
-    const phases = document.querySelectorAll('.phase-step');
-    phases.forEach((phase, index) => {
-        const phaseThreshold = (index + 1) * (100 / phases.length);
-        if (percent >= phaseThreshold) {
-            phase.classList.add('completed');
-            phase.classList.remove('active');
-        } else if (percent >= phaseThreshold - (100 / phases.length)) {
-            phase.classList.add('active');
-            phase.classList.remove('completed');
-        } else {
-            phase.classList.remove('active', 'completed');
-        }
-    });
+  const phases = document.querySelectorAll(".phase-step");
+  phases.forEach((phase, index) => {
+    const phaseThreshold = (index + 1) * (100 / phases.length);
+    if (percent >= phaseThreshold) {
+      phase.classList.add("completed");
+      phase.classList.remove("active");
+    } else if (percent >= phaseThreshold - 100 / phases.length) {
+      phase.classList.add("active");
+      phase.classList.remove("completed");
+    } else {
+      phase.classList.remove("active", "completed");
+    }
+  });
 }
 
 async function submitFeedback(event) {
-    event.preventDefault();
+  event.preventDefault();
+  const startTime = Date.now();
 
-    // Reset progress section and show it
-    const progressSection = document.getElementById('progressSection');
-    progressSection.innerHTML = `
+  const submitButton = event.target.querySelector('button[type="submit"]');
+  const originalText = submitButton.textContent;
+  submitButton.textContent = "Processing...";
+  submitButton.disabled = true;
+
+  // Reset and initialize progress section
+  const progressSection = document.getElementById("progressSection");
+  progressSection.innerHTML = `
         <div class="phase-indicator">
             <div class="phase-step">Input Analysis</div>
             <div class="phase-step">Content Validation</div>
@@ -208,41 +217,292 @@ async function submitFeedback(event) {
         <button id="toggleLog" class="toggle-log-btn">Show Processing Details</button>
         <div id="processingLog" class="processing-log hidden"></div>
     `;
-    progressSection.classList.remove('hidden');
+  progressSection.classList.remove("hidden");
 
-    // Reattach toggle event listener
-    document.getElementById('toggleLog').addEventListener('click', function() {
-        const log = document.getElementById('processingLog');
-        this.textContent = log.classList.toggle('hidden') ?
-            'Show Processing Details' : 'Hide Processing Details';
+  // Reattach toggle event listener
+  document.getElementById("toggleLog").addEventListener("click", function () {
+    const log = document.getElementById("processingLog");
+    this.textContent = log.classList.toggle("hidden")
+      ? "Show Processing Details"
+      : "Hide Processing Details";
+  });
+
+  const selectedHC = document.getElementById("hcSelect").value;
+  const assignmentText = document.getElementById("assignmentText").value;
+
+  try {
+    // Initial setup
+    updateProgress(
+      2,
+      "Initializing analysis...",
+      "Initializing feedback system",
+      "info",
+      "Setup"
+    );
+    addLogEntry("Validating submission requirements", "info", "Setup");
+    addLogEntry(`Selected HC: ${selectedHC}`, "info", "Setup");
+    addLogEntry(
+      `Input length: ${assignmentText.length} characters`,
+      "info",
+      "Setup"
+    );
+
+    // Input Quality Check Phase
+    updateProgress(
+      10,
+      "Checking input quality...",
+      "Starting input quality assessment",
+      "info",
+      "Quality Check"
+    );
+    addLogEntry(
+      "Analyzing text structure and content",
+      "info",
+      "Quality Check"
+    );
+
+    const precheckResponse = await fetch("/api/precheck", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: assignmentText }),
     });
 
-    // Rest of the submission logic with more detailed logging
-    try {
-        updateProgress(5, 'Initializing...', 'Starting feedback process', 'info');
-        // ...existing try block code but with more granular progress updates:
+    const precheckData = await precheckResponse.json();
+    updateProgress(
+      20,
+      "Input quality check complete",
+      "Quality check completed",
+      "status",
+      "Quality Check"
+    );
+    addLogEntry(
+      `Quality check result: ${
+        precheckData.is_meaningful ? "Passed" : "Failed"
+      }`,
+      precheckData.is_meaningful ? "status" : "error",
+      "Quality Check"
+    );
 
-        updateProgress(15, 'Analyzing input...', 'Checking input quality and formatting', 'info');
-        // Precheck API call...
-
-        updateProgress(30, 'Validating content...', 'Evaluating academic content standards', 'info');
-        // More detailed validation logs...
-
-        updateProgress(45, 'Processing HC criteria...', 'Analyzing against selected HC requirements', 'info');
-        // HC processing...
-
-        updateProgress(60, 'Generating feedback...', 'Creating personalized feedback', 'info');
-        // Feedback generation...
-
-        updateProgress(85, 'Finalizing...', 'Formatting results and recommendations', 'info');
-        // Final processing...
-
-        updateProgress(100, 'Complete!', 'Analysis completed successfully', 'status');
-
-    } catch (error) {
-        updateProgress(100, 'Error occurred', error.message, 'error');
-        console.error("Error:", error);
+    if (precheckData.is_meaningful) {
+      addLogEntry(
+        "Carl and team wishes you good luck! 🍀",
+        "status",
+        "Message"
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Pause for effect
     }
+
+    if (!precheckData.is_meaningful) {
+      updateProgress(
+        100,
+        "Input check failed",
+        precheckData.feedback,
+        "error",
+        "Quality Check"
+      );
+      addLogEntry(
+        "Process terminated: Input quality requirements not met",
+        "error",
+        "Quality Check"
+      );
+      alert(`Input quality check failed: ${precheckData.feedback}`);
+      return;
+    }
+
+    // HC Validation Phase
+    updateProgress(
+      30,
+      "Validating HC criteria...",
+      "Loading HC requirements",
+      "info",
+      "HC Validation"
+    );
+    addLogEntry("Obtaining data from HC Handbook...", "info", "HC Validation");
+    addLogEntry(
+      "Accessing: https://my.minerva.edu/academics/hc-resources/hc-handbook/",
+      "info",
+      "Source"
+    );
+    const example = allExamples.find((ex) => ex.hc_name === selectedHC);
+    if (!example) {
+      throw new Error("Selected HC configuration not found");
+    }
+    addLogEntry(
+      "HC requirements loaded successfully",
+      "status",
+      "HC Validation"
+    );
+    addLogEntry(
+      `Processing ${example.guided_reflection.length} reflection criteria`,
+      "info",
+      "HC Validation"
+    );
+    addLogEntry(
+      `Checking ${example.common_pitfalls.length} common pitfalls`,
+      "info",
+      "HC Validation"
+    );
+
+    // Analysis Phase - More Granular
+    updateProgress(
+      45,
+      "Initializing AI pipeline...",
+      "Starting analysis sequence",
+      "info",
+      "Analysis"
+    );
+    addLogEntry("Loading AI models...", "info", "AI Setup");
+    addLogEntry("Initializing Gemini-1.5-flash model...", "info", "AI Setup");
+    addLogEntry("Configuring analysis parameters...", "info", "AI Setup");
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Visual pause
+
+    updateProgress(
+      50,
+      "Processing content...",
+      "Running primary analysis",
+      "info",
+      "Analysis"
+    );
+    addLogEntry("Phase 1: Analyzing semantic structure...", "info", "Analysis");
+    addLogEntry(
+      "Phase 2: Evaluating contextual relevance...",
+      "info",
+      "Analysis"
+    );
+
+    updateProgress(
+      55,
+      "Processing HC criteria...",
+      "Analyzing reflection criteria",
+      "info",
+      "Analysis"
+    );
+    example.guided_reflection.forEach((criterion, index) => {
+      addLogEntry(
+        `Evaluating criterion ${index + 1}/${
+          example.guided_reflection.length
+        }...`,
+        "info",
+        "Analysis"
+      );
+    });
+
+    updateProgress(
+      60,
+      "Processing pitfalls...",
+      "Checking common pitfalls",
+      "info",
+      "Analysis"
+    );
+    example.common_pitfalls.forEach((pitfall, index) => {
+      addLogEntry(
+        `Checking pitfall ${index + 1}/${example.common_pitfalls.length}...`,
+        "info",
+        "Analysis"
+      );
+    });
+
+    addLogEntry(
+      "Starting API request for detailed analysis...",
+      "info",
+      "Analysis"
+    );
+    const response = await fetch("/api/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: assignmentText,
+        hc_name: selectedHC,
+        guided_reflection: example.guided_reflection,
+        common_pitfalls: example.common_pitfalls,
+      }),
+    });
+
+    // Feedback Processing Phase - More Granular
+    updateProgress(
+      70,
+      "Processing AI results...",
+      "Analyzing AI output",
+      "info",
+      "Processing"
+    );
+    addLogEntry("Receiving AI model response...", "info", "Processing");
+    const data = await response.json();
+    addLogEntry("AI response received successfully", "status", "Processing");
+
+    updateProgress(
+      75,
+      "Analyzing feedback...",
+      "Processing feedback data",
+      "info",
+      "Processing"
+    );
+    addLogEntry("Calculating effectiveness scores...", "info", "Processing");
+    addLogEntry("Organizing improvement suggestions...", "info", "Processing");
+
+    updateProgress(
+      80,
+      "Generating recommendations...",
+      "Creating actionable items",
+      "info",
+      "Processing"
+    );
+    addLogEntry("Formatting improvement steps...", "info", "Processing");
+    addLogEntry("Prioritizing suggestions...", "info", "Processing");
+
+    updateProgress(
+      85,
+      "Finalizing analysis...",
+      "Preparing presentation",
+      "info",
+      "Formatting"
+    );
+    addLogEntry("Structuring feedback format...", "info", "Formatting");
+    addLogEntry(
+      "Generating actionable recommendations...",
+      "info",
+      "Formatting"
+    );
+    addLogEntry("Preparing final display...", "info", "Formatting");
+
+    displayFeedback(data);
+
+    // Enhanced Completion
+    updateProgress(
+      95,
+      "Finalizing...",
+      "Wrapping up analysis",
+      "info",
+      "Complete"
+    );
+    addLogEntry("Verifying all processes completed...", "info", "Complete");
+    updateProgress(
+      100,
+      "Analysis complete",
+      "Process completed successfully",
+      "status",
+      "Complete"
+    );
+    addLogEntry(
+      "All analysis modules completed successfully",
+      "status",
+      "Complete"
+    );
+    addLogEntry(
+      `Total processing time: ${((Date.now() - startTime) / 1000).toFixed(2)}s`,
+      "info",
+      "Complete"
+    );
+    addLogEntry("Thank you for using HC Feedback! 🎉", "status", "Complete");
+  } catch (error) {
+    console.error("Error:", error);
+    updateProgress(100, "Error occurred", error.message, "error", "Error");
+    addLogEntry(`Error details: ${error.message}`, "error", "Error");
+    alert(`An error occurred: ${error.message}`);
+  } finally {
+    submitButton.textContent = originalText;
+    submitButton.disabled = false;
+  }
 }
 
 function displayFeedback(feedback) {
