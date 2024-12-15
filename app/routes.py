@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, jsonify, request, current_app
-from feedback.ai.main import analyze_hc  # Import your analyze_hc function
+from .ai.main import analyze_hc  # Import your analyze_hc function
 
 main = Blueprint("main", __name__)
 
@@ -20,7 +20,7 @@ def api_feedback():
 
         if not assignment_text or not hc_name:
             return jsonify({"error": "Missing 'text' or 'hc_name' in request"}), 400
-        
+
         feedback = analyze_hc(assignment_text, hc_name, guided_reflection, common_pitfalls) #pass the relevant info
 
     return jsonify(feedback)

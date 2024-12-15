@@ -1,6 +1,5 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from feedback.ai.config import initialize_analysis_model, initialize_evaluation_model
+from .ai.ai_config import initialize_analysis_model, initialize_evaluation_model
 
 
 def create_app():

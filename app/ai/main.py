@@ -1,12 +1,12 @@
 from flask import current_app
-from feedback.ai.general_feedback import generate_general_feedback
-from feedback.ai.specific_feedback import generate_checklist, evaluate_pitfall
-from feedback.ai.evaluation import evaluate_all_criteria  # Assuming you adapt this for all HCs
-from feedback.ai.config import (
+from .agent_general_feedback import generate_general_feedback
+from .agent_specific_feedback import generate_checklist, evaluate_pitfall
+from .agent_evaluation import evaluate_all_criteria
+from .ai_config import (
     initialize_analysis_model,
     initialize_evaluation_model
 )
-from feedback.ai.logging_config import logger
+from .logging_config import logger
 import json
 import logging
 import os
@@ -47,7 +47,7 @@ def analyze_hc(assignment_text, hc_name, guided_reflection, common_pitfalls):  #
     """Analyzes assignment text based on the chosen HC."""
     logger.info(f"\n=== HC Analysis: {hc_name} ===")
     logger.info(f'Analyzing: "{assignment_text}"\n')
-    
+
     hc_data = load_hc_data(hc_name)
 
     if not hc_data:

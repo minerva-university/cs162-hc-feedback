@@ -1,10 +1,8 @@
-from feedback.ai.config import (
-    initialize_analysis_model,
-    initialize_evaluation_model
-)
-from feedback.ai.evaluation import evaluate_all_criteria
-from feedback.ai.logging_config import logger  # Import the shared logger or setup
+from .ai_config import initialize_analysis_model
+from .agent_evaluation import evaluate_all_criteria
+from .logging_config import logger
 import logging
+
 
 analysis_model = initialize_analysis_model()
 
@@ -69,7 +67,7 @@ def generate_checklist(assignment_text, criteria, pitfalls, include_why=False):
     logger.info("\nEvaluating guided criteria...")
     criteria = criteria
     evaluation_results = evaluate_all_criteria(assignment_text, criteria)
-    
+
     for i, (criterion, passed) in enumerate(zip(criteria, evaluation_results)):
         if not passed:
             logger.info(f"Generating feedback for failed criterion #{i+1}")
