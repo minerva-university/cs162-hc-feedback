@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Add event listeners for search and cornerstone filter
   document.getElementById("cornerstoneFilter").addEventListener("change", filterHCs);
+  
 });
 
 async function loadHCExamples() {
@@ -115,61 +116,100 @@ function showHandbookMessage() {
 }
 
 async function submitFeedback(event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  // Show loading state
-  const submitButton = event.target.querySelector('button[type="submit"]');
-  const originalText = submitButton.textContent;
-  submitButton.textContent = "Processing...";
-  submitButton.disabled = true;
+    const submitButton = event.target.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
+    submitButton.textContent = "Processing...";
+    submitButton.disabled = true;
 
-  try {
-      const response = await fetch("/api/feedback", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-              text: document.getElementById("assignmentText").value,
-          }),
-      });
+    const selectedHC = document.getElementById("hcSelect").value;
+    const assignmentText = document.getElementById("assignmentText").value;
 
-      const data = await response.json();
-      displayFeedback(data);
-  } catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred while processing your feedback request.");
-  } finally {
-      submitButton.textContent = originalText;
-      submitButton.disabled = false;
-  }
+
+    try {
+        const example = allExamples.find(ex => ex.hc_name === selectedHC);
+        console.log("Selected HC:", example);
+        if (!example) {
+            console.error("HC example not found:", selectedHC);
+            alert("Please select an HC.");
+            return;
+        }
+
+
+        const response = await fetch("/api/feedback", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                text: assignmentText,
+                hc_name: selectedHC, // Send the selected HC name to the backend
+                guided_reflection: example.guided_reflection, // Send the guided reflection criteria
+                common_pitfalls: example.common_pitfalls // Send the common pitfalls
+
+            }),
+        });
+        
+        const data = await response.json();
+        console.log(data)
+        displayFeedback(data);
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert(`An error occurred: ${error.message}`); // Show the error's message
+    } finally {
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+    }
 }
 
+
 function displayFeedback(feedback) {
-  // Show feedback container
-  const resultsContainer = document.getElementById("feedbackResults");
-  resultsContainer.classList.remove("hidden");
+    // Show feedback container
+    const resultsContainer = document.getElementById("feedbackResults");
+    resultsContainer.classList.remove("hidden");
 
-  // Display main feedback text
-  document.getElementById("feedbackText").textContent = feedback.text;
+    // Display main feedback text
+    document.getElementById("feedbackText").textContent = feedback.general_feedback; // Use general_feedback
 
-  // Display actionable steps
-  const stepsContainer = document.getElementById("actionableSteps");
-  stepsContainer.innerHTML = ""; // Clear existing steps
+    // Display actionable steps
+    const stepsContainer = document.getElementById("actionableSteps");
+    stepsContainer.innerHTML = ""; // Clear existing steps
 
-  feedback.actionable_steps.forEach((step) => {
-      const stepElement = document.createElement("div");
-      stepElement.className = "step-item";
+    const actionableSteps = parseSpecificFeedback(feedback.specific_feedback);
 
-      stepElement.innerHTML = `
-          <input type="checkbox">
-          <span>${step.text}</span>
-          <div class="tooltip">
-              ℹ️
-              <span class="tooltip-text">${step.tooltip}</span>
-          </div>
-      `;
+    actionableSteps.forEach((step) => {
+        const stepElement = document.createElement("div");
+        stepElement.className = "step-item";
 
-      stepsContainer.appendChild(stepElement);
-  });
+        stepElement.innerHTML = `
+            <input type="checkbox" ${step.completed ? 'checked' : ''}>
+            <p><strong>Change:</strong> ${step.change}</p>  </p> <p><strong>From:</strong> ${step.from}</p><p><strong>To:</strong> ${step.to}</p>
+            <div class="tooltip">
+                ℹ️
+                <span class="tooltip-text">${step.why}</span>
+            </div>
+        `; // Added elements for change, from, and to
+
+        stepsContainer.appendChild(stepElement);
+    });
+}
+
+
+function parseSpecificFeedback(feedbackString) {
+    const steps = [];
+    const regex = /- \[(x| )] Change: (.+)\n  From: (.+)\n  To: (.+)\n  Why: (.+)/g; // Modified regex
+    let match;
+
+    while ((match = regex.exec(feedbackString)) !== null) {
+        steps.push({
+            change: match[2].trim(), // Capture "Change"
+            from: match[3].trim(),   // Capture "From"
+            to: match[4].trim(),     // Capture "To"
+            why: match[5].trim(),     // Capture "Why"
+            completed: match[1] === 'x'
+        });
+    }
+    return steps;
 }
