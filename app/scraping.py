@@ -62,20 +62,29 @@ def login_and_scrape_all_hcs(login_url, hc_categories, username, password):
                 # General Example and Footnote
                 general_example_section = soup.find("p", id="hc_general_example")
                 if general_example_section:
+                    # Extract Footnote from the same section
+                    footnote = general_example_section.find_next("em")
+                    if footnote:
+                        # Clean the footnote content
+                        footnote_content = (
+                            footnote.get_text(strip=True)
+                            .replace("Footnote:", "")
+                            .strip()
+                        )
+                        data["footnote"] = footnote_content
+                        # Remove the footnote content from the general example
+                        footnote.extract()
+                    else:
+                        data["footnote"] = "Not found"
+
+                    # Extract the cleaned general example content
                     general_example_content = general_example_section.get_text(
                         strip=True
                     )
                     data["general_example"] = general_example_content
-
-                    # Extract Footnote from the same section
-                    footnote = general_example_section.find_next("em")
-                    if footnote:
-                        footnote_content = footnote.get_text(strip=True)
-                        data["footnote"] = footnote_content
-                    else:
-                        data["footnote"] = "Not found"
                 else:
                     data["general_example"] = "Not found"
+                    data["footnote"] = "Not found"
 
                 # Extract Cornerstone Introduction
                 cornerstone_section = soup.find("h4", string="Cornerstone Introduction")
