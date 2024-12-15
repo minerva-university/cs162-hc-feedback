@@ -1,8 +1,6 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from app.models import db
-from app.data import HC_EXAMPLES_DATA
-from feedback.ai.config import initialize_analysis_model, initialize_evaluation_model
+from .ai.ai_config import initialize_analysis_model, initialize_evaluation_model
+
 
 def create_app():
     """
@@ -16,46 +14,12 @@ def create_app():
     app.config["SECRET_KEY"] = "dev"  # Change this in production!
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///hc_feedback.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config['ANALYSIS_MODEL'] = initialize_analysis_model()
-    app.config['EVALUATION_MODEL'] = initialize_evaluation_model()
-
-    # Initialize database
-    db.init_app(app)
-
-    # Create tables
-    with app.app_context():
-        db.create_all()
-        initialize_database()
+    app.config["ANALYSIS_MODEL"] = initialize_analysis_model()
+    app.config["EVALUATION_MODEL"] = initialize_evaluation_model()
 
     # Register routes
     from app.routes import main
+
     app.register_blueprint(main)
 
-    # Create the tables if they don't exist yet
-    with app.app_context():
-        db.create_all()
-
     return app
-
-
-def initialize_database():
-    from app.models import HCExample
-
-    # Only add initial data if table is empty
-    if HCExample.query.first() is None:
-        examples = [
-            HCExample(
-                hc_name=data["hc_name"],
-                cornerstone=data["cornerstone"],
-                general_example=data["general_example"],
-                footnote=data["footnote"],
-            )
-            for data in HC_EXAMPLES_DATA
-        ]
-
-        # Use chunks to avoid memory issues with large datasets
-        chunk_size = 50
-        for i in range(0, len(examples), chunk_size):
-            chunk = examples[i : i + chunk_size]
-            db.session.bulk_save_objects(chunk)
-            db.session.commit()

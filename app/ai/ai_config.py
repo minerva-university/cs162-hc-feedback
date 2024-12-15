@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 from pathlib import Path
-from feedback.ai.logging_config import logger  # Import the shared logger or setup
+from .logging_config import logger  # Import the shared logger or setup
 import logging
 
 # Get the project root directory

@@ -1,11 +1,12 @@
 from flask import current_app
-from feedback.ai.general_feedback import generate_general_feedback
-from feedback.ai.specific_feedback import generate_checklist, evaluate_pitfall
-from feedback.ai.evaluation import (
-    evaluate_all_criteria,
-)  # Assuming you adapt this for all HCs
-from feedback.ai.config import initialize_analysis_model, initialize_evaluation_model
-from feedback.ai.logging_config import logger
+from .agent_general_feedback import generate_general_feedback
+from .agent_specific_feedback import generate_checklist, evaluate_pitfall
+from .agent_evaluation import evaluate_all_criteria
+from .ai_config import (
+    initialize_analysis_model,
+    initialize_evaluation_model
+)
+from .logging_config import logger
 import json
 import logging
 import os
