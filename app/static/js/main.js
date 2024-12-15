@@ -1,79 +1,81 @@
-
-// Update the "View in HC Handbook" button with onclick
-document.getElementById("handbookLink").onclick = showHandbookMessage;
-
 // Store all examples globally for filtering
 let allExamples = [];
 
 document.addEventListener("DOMContentLoaded", function () {
-  loadHCExamples();
+    loadHCExamples();
 
-  // Add click handlers for all modals
-  document.querySelectorAll(".modal").forEach((modal) => {
-      modal.addEventListener("click", (e) => {
-          // Close if clicking outside the modal content
-          if (e.target === modal) {
-              hideModal(modal.id);
-          }
-      });
-  });
+    // Add click handlers for all modals
+    document.querySelectorAll(".modal").forEach((modal) => {
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                hideModal(modal.id);
+            }
+        });
+    });
 
-  // Add event listeners for search and cornerstone filter
-  document.getElementById("cornerstoneFilter").addEventListener("change", filterHCs);
-  
+    // Add event listener for cornerstone filter
+    document.getElementById("cornerstoneFilter").addEventListener("change", filterHCs);
+
+    // Add handbook link handler
+    document.getElementById("handbookLink").onclick = showHandbookMessage;
 });
 
 async function loadHCExamples() {
     try {
-      // Load HC data from the JSON file
-      const response = await fetch("../static/js/all_hc_data.json");
-      const data = await response.json();
-      
-      // Flatten the data structure (optional but recommended)
-      allExamples = Object.values(data).flat();
-  
-      updateHCSelect(allExamples);
+        const response = await fetch("/api/hcs");
+        const data = await response.json();
+
+        // Flatten the data structure
+        allExamples = Object.entries(data).flatMap(([cornerstone, hcs]) =>
+            hcs.map(hc => ({...hc, cornerstone: cornerstone}))
+        );
+
+        // Initial population of select
+        updateHCSelect(allExamples);
     } catch (error) {
-      console.error("Error loading HC examples:", error);
+        console.error("Error loading HC examples:", error);
     }
-  }
 
-  function updateHCSelect(examples) {
-    const select = document.getElementById("hcSelect");
-    const footnoteButton = document.getElementById("footnoteButton"); // Add this line
-  
-    select.innerHTML = '<option value="">Select an HC example...</option>';
-  
-    examples.forEach(example => {
-        const option = document.createElement("option");
-        option.value = example.hc_name;
-        option.textContent = `${example.hc_name}`;
-        select.appendChild(option);
-    });
-  
-    // Add change event listener
-    select.addEventListener("change", (e) => {
-        if (e.target.value) {
-            console.log("Selected HC:", e.target.value);
-            footnoteButton.disabled = false; // Enable button when HC is selected
-        } else {
-            footnoteButton.disabled = true; // Disable button when no HC is selected
-        }
-    });
-  
-    // Disable footnote button by default
-    footnoteButton.disabled = true;
-  }
-  
-function filterHCs() {
-  const selectedCornerstone = document.getElementById("cornerstoneFilter").value;
+}
 
-  const filteredExamples = allExamples.filter(example => {
-      const matchesCornerstone = !selectedCornerstone || example.cornerstone === selectedCornerstone;
-      return matchesCornerstone;
+function updateHCSelect(examples) {
+  const select = document.getElementById("hcSelect");
+  const footnoteButton = document.getElementById("footnoteButton"); // Add this line
+
+  select.innerHTML = '<option value="">Select an HC example...</option>';
+
+  examples.forEach(example => {
+      const option = document.createElement("option");
+      option.value = example.hc_name;
+      option.textContent = `${example.hc_name}`;
+      select.appendChild(option);
   });
 
-  updateHCSelect(filteredExamples);
+  // Add change event listener
+  select.addEventListener("change", (e) => {
+      if (e.target.value) {
+          console.log("Selected HC:", e.target.value);
+          footnoteButton.disabled = false; // Enable button when HC is selected
+      } else {
+          footnoteButton.disabled = true; // Disable button when no HC is selected
+      }
+  });
+
+  // Disable footnote button by default
+  footnoteButton.disabled = true;
+}
+  
+function filterHCs() {
+    const selectedCornerstone = document.getElementById("cornerstoneFilter").value;
+
+    let filteredExamples = allExamples;
+    if (selectedCornerstone) {
+        filteredExamples = allExamples.filter(example =>
+            example.cornerstone === selectedCornerstone
+        );
+    }
+
+    updateHCSelect(filteredExamples);
 }
 
 async function showModal(modalId) {
@@ -119,7 +121,7 @@ function hideModal(modalId) {
 
 function showHandbookMessage() {
     const selectedHC = document.getElementById("hcSelect").value;
-    const handbookURL = `https://my.minerva.edu/application/login/?next=/academics/hc-resources/hc-handbook/#${selectedHC.toLowerCase()}`; 
+    const handbookURL = `https://my.minerva.edu/application/login/?next=/academics/hc-resources/hc-handbook/#${selectedHC.toLowerCase()}`;
     window.open(handbookURL, '_blank');
 }
 
@@ -158,7 +160,7 @@ async function submitFeedback(event) {
 
             }),
         });
-        
+
         const data = await response.json();
         console.log(data)
         displayFeedback(data);

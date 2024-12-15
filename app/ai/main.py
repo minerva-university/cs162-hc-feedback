@@ -1,58 +1,49 @@
 from flask import current_app
+from ..models import HC, GuidedReflection, CommonPitfall
 from .agent_general_feedback import generate_general_feedback
 from .agent_specific_feedback import generate_checklist, evaluate_pitfall
 from .agent_evaluation import evaluate_all_criteria
-from .ai_config import (
-    initialize_analysis_model,
-    initialize_evaluation_model
-)
+from .ai_config import initialize_analysis_model, initialize_evaluation_model
 from .logging_config import logger
-import json
-import logging
-import os
-import requests
 
 analysis_model = initialize_analysis_model()
 evaluation_model = initialize_evaluation_model()
 
-# Cache for HC data (avoids repeated file reads)
+# Cache for HC data
 hc_data_cache = {}
 
-
 def load_hc_data(hc_name):
-    """Loads HC data from online JSON, using cache."""
+    """Loads HC data from database, using cache."""
     if hc_name in hc_data_cache:
         return hc_data_cache[hc_name]
 
     try:
-        # Fetch JSON from the online source
-        response = requests.get("https://jsonkeeper.com/b/CCDQ", verify=False)
-        response.raise_for_status()  # Raise HTTPError for bad responses
-        all_hc_data = response.json()  # Parse JSON response
+        hc = HC.query.filter_by(name=hc_name).first()
+        if hc:
+            # Convert to dictionary format
+            hc_data = {
+                "hc_name": hc.name,
+                "footnote": hc.footnote,
+                "general_example": hc.general_example,
+                "guided_reflection": [gr.text for gr in hc.guided_reflections],
+                "common_pitfalls": [cp.text for cp in hc.common_pitfalls]
+            }
+            hc_data_cache[hc_name] = hc_data
+            return hc_data
 
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Error fetching JSON data: {e}")
+    except Exception as e:
+        logger.error(f"Error fetching HC data from database: {e}")
         return None
-
-    for cornerstone, hcs in all_hc_data.items():
-        for hc in hcs:
-            if hc["hc_name"] == hc_name:
-                hc_data_cache[hc_name] = hc  # Add HC data to the cache
-                return hc
 
     logger.error(f"HC data not found for: {hc_name}")
     return None
 
-
-def analyze_hc(
-    assignment_text, hc_name, guided_reflection, common_pitfalls
-):  # Renamed and updated parameters
+def analyze_hc(assignment_text, hc_name, guided_reflection, common_pitfalls):
     """Analyzes assignment text based on the chosen HC."""
     logger.info(f"\n=== HC Analysis: {hc_name} ===")
     logger.info(f'Analyzing: "{assignment_text}"\n')
 
     hc_data = load_hc_data(hc_name)
-
     if not hc_data:
         logger.error(f"HC data not found for: {hc_name}")
         return {"error": f"HC '{hc_name}' not found"}
@@ -62,7 +53,7 @@ def analyze_hc(
 
     criteria_results = evaluate_all_criteria(
         assignment_text, criteria
-    )  # Update this to work for HC criteria
+    )
 
     pitfall_results = [
         evaluate_pitfall(assignment_text, pitfall) for pitfall in pitfalls
@@ -72,21 +63,21 @@ def analyze_hc(
     passed_checks = sum(criteria_results) + sum(pitfall_results)
     pass_percentage = (passed_checks / total_checks) * 100
 
-    logging.info(
+    logger.info(
         f"Overall Score: {passed_checks}/{total_checks} ({pass_percentage:.1f}%)"
     )
-    logging.info(f"Criteria Score: {sum(criteria_results)}/{len(criteria_results)}")
-    logging.info(f"Pitfalls Score: {sum(pitfall_results)}/{len(pitfall_results)}\n")
+    logger.info(f"Criteria Score: {sum(criteria_results)}/{len(criteria_results)}")
+    logger.info(f"Pitfalls Score: {sum(pitfall_results)}/{len(pitfall_results)}\n")
 
-    logging.info("1. General Feedback:")
-    logging.info("-" * 40)
+    logger.info("1. General Feedback:")
+    logger.info("-" * 40)
     general = generate_general_feedback(assignment_text, criteria)
-    logging.info(general)
+    logger.info(general)
 
-    logging.info("\n2. Specific Changes Needed:")
-    logging.info("-" * 40)
+    logger.info("\n2. Specific Changes Needed:")
+    logger.info("-" * 40)
     specific = generate_checklist(assignment_text, criteria, pitfalls, include_why=True)
-    logging.info(specific)
+    logger.info(specific)
 
     return {
         "general_feedback": general,

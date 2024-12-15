@@ -5,6 +5,8 @@ from pathlib import Path
 from .logging_config import logger  # Import the shared logger or setup
 import logging
 
+gemini_model = genai.GenerativeModel('gemini-1.5-flash-8b')
+
 # Get the project root directory
 project_root = Path(__file__).parent.parent.parent
 
@@ -28,7 +30,7 @@ def initialize_evaluation_model():
         logger.debug(f"API Key present: {bool(genai_api_key)}")
         genai.configure(api_key=genai_api_key)
 
-        model = genai.GenerativeModel('gemini-1.5-flash-8b')
+        model = gemini_model
         logger.info("Evaluation model initialized successfully")
         return model
     except Exception as e:
@@ -43,7 +45,7 @@ def initialize_analysis_model():
         logger.debug(f"API Key present: {bool(genai_api_key)}")
         genai.configure(api_key=genai_api_key)
 
-        model = genai.GenerativeModel('gemini-1.5-flash-8b')
+        model = gemini_model
         logger.info("Analysis model initialized successfully")
         return model
     except Exception as e:
