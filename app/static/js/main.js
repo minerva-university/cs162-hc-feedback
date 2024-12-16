@@ -39,6 +39,11 @@ document.addEventListener("DOMContentLoaded", function () {
       btn.textContent = "Show Processing Log";
     }
   });
+
+  // Add footnote button handler
+  document
+    .getElementById("generateFootnoteBtn")
+    .addEventListener("click", generateFootnote);
 });
 
 async function loadHCExamples() {
@@ -573,12 +578,12 @@ function displayFeedback(feedback) {
 
         // Format change and why text with better spacing
         const formattedWhy = `${step.change}\n\n${step.why
-            .trim()
-            .replace(/\s+/g, ' ')
-            .replace(/\. /g, '.\n')
-            .replace(/; /g, ';\n')
-            .replace(/\n+/g, '\n')
-            .trim()}`;
+          .trim()
+          .replace(/\s+/g, " ")
+          .replace(/\. /g, ".\n")
+          .replace(/; /g, ";\n")
+          .replace(/\n+/g, "\n")
+          .trim()}`;
 
         stepElement.innerHTML = `
             <input type="checkbox" ${step.completed ? "checked" : ""}>
@@ -607,6 +612,33 @@ function displayFeedback(feedback) {
         });
     }
   });
+
+  // Update score display and button state
+  const scoreValue = document.getElementById('scoreValue');
+  const scoreMessage = document.getElementById('scoreMessage');
+  const generateFootnoteBtn = document.getElementById("generateFootnoteBtn");
+  const score = feedback.score.total;
+
+  // Display score with one decimal place
+  scoreValue.textContent = score.toFixed(1);
+
+  // Get threshold from backend
+  fetch('/api/threshold').then(response => response.json())
+      .then(data => {
+          const threshold = data.threshold * 100; // Convert from decimal to percentage
+          generateFootnoteBtn.disabled = (score < threshold);
+
+          if (score < threshold) {
+              scoreMessage.textContent = `Your application needs improvement to meet HC requirements (${threshold}% needed)`;
+              scoreMessage.style.color = "#c53030";
+              generateFootnoteBtn.title = `Score (${score.toFixed(1)}%) is below required ${threshold}% threshold`;
+          } else {
+              scoreMessage.textContent = "Great job! Your application meets the HC requirements.";
+              scoreMessage.style.color = "#2f855a";
+              generateFootnoteBtn.title = "Generate example footnote based on your application";
+          }
+      })
+      .catch(error => console.error('Error fetching threshold:', error));
 }
 
 function parseSpecificFeedback(feedbackString) {
@@ -628,6 +660,53 @@ function parseSpecificFeedback(feedbackString) {
   return steps;
 }
 
+async function generateFootnote() {
+  const assignmentText = document.getElementById("assignmentText").value;
+  const selectedHC = document.getElementById("hcSelect").value;
+  const score = parseFloat(document.querySelector("#scoreValue").textContent) / 100;
+
+  console.log("Sending score to footnote API:", score); // Debug log
+
+  try {
+    const response = await fetch("/api/footnote", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: assignmentText,
+        hc_name: selectedHC,
+        score: score, // Already converted to decimal
+        context: currentContext,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      if (response.status === 403) {
+        alert(data.message || "Score too low to generate footnote");
+        return;
+      }
+      throw new Error(data.error || "Failed to generate footnote");
+    }
+
+    // Show the footnote in the modal
+    const modal = document.getElementById("footnoteModal");
+    const modalContent = modal.querySelector(".modal-content");
+    modalContent.innerHTML = `
+          <h2>Generated Footnote Example</h2>
+          <div class="footnote-content">
+              <p>${data.footnote}</p>
+          </div>
+          <button onclick="hideModal('footnoteModal')" class="btn">Close</button>
+      `;
+    showModal("footnoteModal");
+  } catch (error) {
+    console.error("Error generating footnote:", error);
+    alert("Error generating footnote: " + error.message);
+  }
+}
 
 function saveContext() {
   currentContext = {
@@ -637,7 +716,6 @@ function saveContext() {
   };
   hideModal("contextModal");
 
-  
   // Update the context button to show status
   const contextButton = document.querySelector(
     "button[onclick=\"showModal('contextModal')\"]"

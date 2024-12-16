@@ -793,3 +793,41 @@
 .steps-list:not(.hidden) {
     display: block;
 }
+
+/* New Elements Styles */
+.score-display {
+    margin: 2rem 0;
+    padding: 1rem;
+    background: linear-gradient(to right, rgba(243, 244, 246, 0.6), rgba(243, 244, 246, 0.3));
+    border-radius: 8px;
+}
+
+.score-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.score-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #4b5563;
+}
+
+.score-message {
+    font-size: 0.95rem;
+    color: #6b7280;
+}
+
+#generateFootnoteBtn {
+    margin: 1rem 0 2rem;
+    width: 100%;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+#generateFootnoteBtn:not(:disabled) {
+    opacity: 1;
+    background-color: #4b5563;
+}
