@@ -58,9 +58,9 @@ jobs:
         #  run: |
         #    curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=🚨 Deployment Failed for SQLite App"
 
-      - name: Print Container Status
-        run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@$SSH_IP 'cd ${{ secrets.PROJECT_ROOT }} && docker compose -f docker-compose.dev.yml ps'
+      # - name: Print Container Status
+      #   run: |
+      #     sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@$SSH_IP 'cd ${{ secrets.PROJECT_ROOT }} && docker compose -f docker-compose.dev.yml ps'
 
       #- name: Deployment Successful Message
       #  run: |
