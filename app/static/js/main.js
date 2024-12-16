@@ -139,7 +139,7 @@ function hideModal(modalId) {
 
 function showHandbookMessage() {
   const selectedHC = document.getElementById("hcSelect").value;
-  const handbookURL = `https://my.minerva.edu/application/login/?next=/academics/hc-resources/hc-handbook/#${selectedHC.toLowerCase()}`;
+  const handbookURL = `https://my.minerva.edu/application/login/?next=/academics/hc-resources/hc-handbook/${selectedHC.toLowerCase()}`;
   window.open(handbookURL, "_blank");
 }
 
