@@ -21,13 +21,15 @@
     text-align: left;
     margin-bottom: 2rem;
     padding: 1rem;
-    background-color: #f5f5f5; /* Light background to make it stand out */
+    background-color: #f5f5f5;
+    /* Light background to make it stand out */
     border-radius: 8px;
 }
 
 .welcome-section h1 {
     font-size: 2rem;
-    color: var(--primary-color); /* Use primary color for coherence */
+    color: var(--primary-color);
+    /* Use primary color for coherence */
     margin: 0;
     font-weight: bold;
 }
@@ -45,23 +47,28 @@
     border-radius: 4px;
     font-size: 1rem;
 }
+
 /* HC List Styles */
-.hc-list {
+.cornerstone-select {
     margin-top: 1.5rem;
     font-size: 1rem;
-    font-family: Arial, sans-serif; /* Ensures consistent font */
+    font-family: Arial, sans-serif;
+    /* Ensures consistent font */
 }
 
 .hc-item {
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--border-color);
 }
+
 .hc-feedback-description {
     font-size: 1rem;
-    color: var(--secondary-color); /* Matches secondary color */
+    color: var(--secondary-color);
+    /* Matches secondary color */
     margin-top: 0.5rem;
     line-height: 1.5;
 }
+
 /* Terms Container Styles */
 .terms-container {
     margin: 1rem 0;
@@ -80,6 +87,13 @@
     display: flex;
     gap: 1rem;
     margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.action-buttons .btn {
+    flex: 1;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .btn {
@@ -104,12 +118,15 @@
 
 .feedback-textarea {
     width: 100%;
-    min-height: 150px;
+    height: 200px;
+    resize: none;  /* Disable manual resizing */
     padding: 0.75rem;
     border: 1px solid var(--border-color);
     border-radius: 4px;
     margin-bottom: 1rem;
     font-size: 1rem;
+    line-height: 1.5;
+    overflow-y: auto; /* Add scrollbar for overflow */
 }
 
 /* Feedback Results */
@@ -118,6 +135,11 @@
     border-radius: 4px;
     padding: 1rem;
     margin-top: 2rem;
+}
+
+#footnoteButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Submit Button Styles */
@@ -193,53 +215,27 @@
 }
 
 .modal-content {
-    background-color: white;
+    background-color: #ffffff;
     padding: 2rem;
-    border-radius: 4px;
-    max-width: 500px;
-    width: 90%;
+    border-radius: 8px;
+    width: 60vw;
+    min-height: 35vh;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* Specific styles for handbook modal */
+#handbookModal .modal-content {
+    width: 400px;
+    min-height: auto;
+    text-align: center;
 }
 
 .hidden {
     display: none;
 }
-/* Handbook Modal Styles */
-.modal-content {
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 8px;
-    max-width: 400px;
-    width: 90%;
-    text-align: center; /* Center-align text */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow */
-}
-
-.modal-content h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.modal-content p {
-    font-size: 1rem;
-    color: var(--secondary-color); /* Adjust color if needed */
-    margin-bottom: 1.5rem;
-}
-
-.modal-content .btn {
-    background-color: var(--primary-color);
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border: none;
-    text-transform: uppercase; /* Optional for styling */
-}
-
-.modal-content .btn:hover {
-    opacity: 0.9;
-}
-
 
 /* Tooltip Styles */
 .tooltip {
@@ -268,10 +264,302 @@
     visibility: visible;
 }
 
-/* Universal Font Style */
-* {
-    font-family: Arial, sans-serif; /* Replace with desired font */
-    font-size: 1rem; /* Set default font size */
-    box-sizing: border-box; /* Ensure consistent sizing for all elements */
+/* Example and Footnote Modal Styles */
+.example-content,
+.footnote-content {
+    margin-bottom: 1.5rem;
+    text-align: left;
 }
 
+.example-content h3,
+.footnote-content h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.example-content p,
+.footnote-content p {
+    line-height: 1.6;
+    color: var(--secondary-color);
+    font-size: 0.95rem;
+}
+
+/* Universal Font Style */
+* {
+    font-family: Arial, sans-serif;
+    /* Replace with desired font */
+    font-size: 1rem;
+    /* Set default font size */
+    box-sizing: border-box;
+    /* Ensure consistent sizing for all elements */
+}
+
+.hc-select, .cornerstone-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: white;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.5em;
+    padding-right: 2rem;
+  }
+
+/* Progress Section Styles */
+.progress-section {
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 12px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.progress-section.hidden {
+    display: none;
+}
+
+.progress-container {
+    width: 100%;
+    height: 6px;
+    background-color: #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #45a049);
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.progress-status {
+    font-size: 0.95em;
+    color: #2d3436;
+    margin: 12px 0;
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.toggle-log-btn {
+    display: block;
+    margin: 10px auto;
+    padding: 8px 16px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: #4a5568;
+    margin: 12px 0;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.toggle-log-btn:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+    transform: translateY(-1px);
+}
+
+.processing-log {
+    max-height: 400px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'SF Mono', 'Consolas', monospace;
+    font-size: 0.85em;
+    line-height: 1.6;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f8f9fa;
+}
+
+.processing-log.hidden {
+    display: none;
+}
+
+.processing-log::-webkit-scrollbar {
+    width: 8px;
+}
+
+.processing-log::-webkit-scrollbar-track {
+    background: #f8f9fa;
+}
+
+.processing-log::-webkit-scrollbar-thumb {
+    background-color: #cbd5e0;
+    border-radius: 4px;
+    border: 2px solid #f8f9fa;
+}
+
+.log-entry {
+    padding: 6px 8px;
+    margin: 4px 0;
+    border-radius: 4px;
+    display: flex;
+    align-items: flex-start;
+    transition: background-color 0.2s ease;
+}
+
+.log-entry:hover {
+    background-color: #f8f9fa;
+}
+
+.log-time {
+    color: #718096;
+    min-width: 85px;
+    margin-right: 12px;
+    font-size: 0.9em;
+}
+
+.log-message {
+    flex: 1;
+    color: #2d3436;
+}
+
+.log-entry.status { color: #2f855a; }
+.log-entry.info { color: #2b6cb0; }
+.log-entry.warn { color: #c05621; }
+.log-entry.error { color: #c53030; }
+
+.phase-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 30px;
+    position: relative;
+}
+
+.phase-indicator::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e2e8f0;
+    z-index: 1;
+}
+
+.phase-step {
+    position: relative;
+    z-index: 2;
+    background: #f8f9fa;
+    padding: 0 12px;
+    font-size: 0.85em;
+    color: #718096;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.phase-step::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 50%;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: all 0.3s ease;
+}
+
+.phase-step.active {
+    color: #2f855a;
+    font-weight: 600;
+}
+
+.phase-step.active::after {
+    background: #48bb78;
+    box-shadow: 0 0 0 4px rgba(72, 187, 120, 0.2);
+}
+
+.phase-step.completed {
+    color: #2f855a;
+}
+
+.phase-step.completed::after {
+    background: #48bb78;
+}
+
+/* Animation for log entries */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.log-entry {
+    animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* Status colors with better contrast */
+.log-entry.status .log-message { color: #2f855a; }
+.log-entry.info .log-message { color: #2b6cb0; }
+.log-entry.warn .log-message { color: #c05621; }
+.log-entry.error .log-message { color: #c53030; }
+
+/* Hide scrollbar when not needed */
+.processing-log {
+    scrollbar-gutter: stable;
+}
+
+/* Ensure the progress section stands out */
+.progress-section:not(.hidden) {
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Context Inputs Styles */
+.context-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.context-section h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: var(--primary-color);
+}
+
+.context-textarea {
+    width: 100%;
+    height: 150px;
+    resize: none;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    background-color: var(--background-color);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.btn.has-context {
+    background-color: var(--secondary-color);
+}
