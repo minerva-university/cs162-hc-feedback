@@ -44,7 +44,7 @@ jobs:
           set -e
           cd ${{ secrets.PROJECT_ROOT }}
           git pull origin dev
-          docker compose -f docker-compose.dev.yml down
+          docker compose -f docker-compose.dev.yml down --remove-orphans
           docker compose -f docker-compose.dev.yml up -d --build
           EOF
         env:
