@@ -5,27 +5,45 @@ import logging
 model = initialize_analysis_model()
 
 
-def generate_general_feedback(assignment_text, criteria):
+def generate_general_feedback(assignment_text, criteria, context=None):
+    """Generate general feedback considering assignment context"""
+    logger.info("Generating general feedback.")
     criteria_list = criteria
     numbered_criteria = "\n".join(
         f"{i+1}. {criterion}" for i, criterion in enumerate(criteria_list)
     )
 
-# todo: change "thesis" into {HC}
+    # Build context-aware prompt
+    context_info = ""
+    if context:
+        if context.get("assignmentDescription"):
+            context_info += (
+                f"\nAssignment Description:\n{context['assignmentDescription']}"
+            )
+            logger.info("Got the assignment description info")
+        if context.get("existingContext"):
+            context_info += f"\nFull Assignment Context:\n{context['existingContext']}"
+            logger.info("Got the context info")
+
     prompt = f"""
-Analyze  based on the guided reflection criteria:
+Consider the following context for your analysis:{context_info if context_info else ' No additional context provided.'}
+
+Analyze the following text based on these guided reflection criteria:
 {numbered_criteria}
 
 Provide a single paragraph of constructive feedback (600 characters).
+Consider the provided context in your analysis.
+Don't show a sample improvement, that's another agent's job.
+Don't refer to criteria by numbers.
+Be straightforward and specific while maintaining a high-level perspective.
 
-Don't show a sample improvement, that's another agent's job. Don't refer to criteria by numbers. Straight to point.
-
-Focus on giving high-level feedback that is still specific, but not micromanage-y.
-
+Text to analyze:
 {assignment_text}
 """
+
     try:
         response = model.generate_content(prompt)
+        logger.info(f"Generated general feedback: {response.text.strip()}")
         return response.text.strip()
     except Exception as e:
         logger.error(f"Error in general feedback: {e}")

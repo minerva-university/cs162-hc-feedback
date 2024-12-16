@@ -83,10 +83,25 @@
     <div id="contextModal" class="modal hidden">
         <div class="modal-content">
             <h2>Add Context</h2>
-            <p>Context information goes here...</p>
-            <button onclick="hideModal('contextModal')" class="btn">Close</button>
+            <div class="context-inputs">
+                <div class="context-section">
+                    <h3>Assignment Description</h3>
+                    <textarea id="assignmentDescription" class="context-textarea"
+                        placeholder="Enter the assignment prompt or requirements..."></textarea>
+                </div>
+                <div class="context-section">
+                    <h3>Existing Assignment Context</h3>
+                    <textarea id="existingContext" class="context-textarea"
+                        placeholder="Enter the surrounding context or full assignment where this portion appears..."></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button onclick="saveContext()" class="btn btn-primary">Save Context</button>
+                <button onclick="hideModal('contextModal')" class="btn">Cancel</button>
+            </div>
         </div>
     </div>
+
     <!-- Handbook Message Modal -->
     <div id="handbookModal" class="modal hidden">
         <div class="modal-content">
