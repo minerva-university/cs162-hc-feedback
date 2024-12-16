@@ -1,0 +1,14 @@
+version: "3"
+services:
+  hc-feedback:
+    container_name: cs162-hc-feedback
+    build: .
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./instance:/app/instance  # Persist the SQLite database file
+
+volumes: {}
