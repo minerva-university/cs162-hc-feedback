@@ -97,6 +97,7 @@ def api_feedback():
             )
             logger.info(f"Feedback generated: {feedback}")
             return jsonify(feedback)
+        
     except Exception as e:
         logger.error(f"Error processing feedback request: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
