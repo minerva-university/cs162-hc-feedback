@@ -100,15 +100,17 @@
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 4px;
-    background-color: var(--primary-color);
+    background-color: rgba(51, 51, 51, 0.9);
     color: white;
     cursor: pointer;
     text-decoration: none;
     font-size: 0.9rem;
+    transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .btn:hover {
-    opacity: 0.9;
+    transform: translateY(-1px);
+    background-color: rgba(51, 51, 51, 1);
 }
 
 /* Form Styles */
@@ -119,22 +121,26 @@
 .feedback-textarea {
     width: 100%;
     height: 200px;
-    resize: none;  /* Disable manual resizing */
+    resize: none;
+    /* Disable manual resizing */
     padding: 0.75rem;
-    border: 1px solid var(--border-color);
+    border: none;
     border-radius: 4px;
     margin-bottom: 1rem;
     font-size: 1rem;
     line-height: 1.5;
-    overflow-y: auto; /* Add scrollbar for overflow */
+    overflow-y: auto;
+    /* Add scrollbar for overflow */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* Feedback Results */
 .feedback-results {
-    border: 1px solid var(--border-color);
+    border: none;
     border-radius: 4px;
     padding: 1rem;
     margin-top: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 #footnoteButton:disabled {
@@ -182,9 +188,8 @@
 
 .steps-list {
     margin-top: 1rem;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-top: none;
+    background: transparent;
+    border: none;
 }
 
 .steps-list.hidden {
@@ -192,12 +197,17 @@
 }
 
 .step-item {
-    background-color: #f5f5f5;
-    padding: 0.75rem;
+    background-color: rgba(245, 245, 245, 0.5);
+    padding: 1.25rem;
     border-radius: 4px;
-    margin-bottom: 0.75rem;
-    padding: 1rem;
-    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 1rem;
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.step-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .step-item:last-child {
@@ -207,6 +217,30 @@
 .step-item input[type="checkbox"] {
     margin-right: 0.75rem;
     transform: scale(1.2);
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid #d1d5db;
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.step-item input[type="checkbox"]:checked {
+    background-color: #4b5563;
+    border-color: #4b5563;
+}
+
+.step-item input[type="checkbox"]:checked::after {
+    content: "✓";
+    position: absolute;
+    color: white;
+    font-size: 0.8rem;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .step-item span {
@@ -215,11 +249,15 @@
 }
 
 .step-content {
-    margin-left: 2rem;
+    margin-left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
 .step-content p {
-    margin: 0.5rem 0;
+    margin: 0;
+    color: #374151;
 }
 
 /* Modal Styles */
@@ -245,6 +283,8 @@
     overflow-y: auto;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* Specific styles for handbook modal */
@@ -261,28 +301,37 @@
 /* Tooltip Styles */
 .tooltip {
     position: relative;
-    display: inline-block;
-    margin-left: 0.5rem;
-    cursor: help;
+    display: block;
+    margin: 0.75rem 0 0 0;
+    cursor: default;
 }
 
 .tooltip-text {
-    visibility: hidden;
-    position: absolute;
+    visibility: visible;
+    position: static;
     z-index: 1;
     bottom: 125%;
     left: 50%;
-    transform: translateX(-50%);
-    background-color: black;
-    color: white;
-    padding: 0.5rem;
-    border-radius: 4px;
-    width: 200px;
-    font-size: 0.8rem;
+    transform: none;
+    background-color: rgba(243, 244, 246, 0.8);
+    color: #4b5563;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    width: auto;
+    font-size: 0.95rem;
+    font-style: italic;
+    line-height: 1.6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-top: 1rem;
 }
 
-.tooltip:hover .tooltip-text {
-    visibility: visible;
+.tooltip::before {
+    content: "Why this matters:";
+    display: block;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
 }
 
 /* Example and Footnote Modal Styles */
@@ -316,10 +365,11 @@
     /* Ensure consistent sizing for all elements */
 }
 
-.hc-select, .cornerstone-select {
+.hc-select,
+.cornerstone-select {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid var(--border-color);
+    border: none;
     border-radius: 4px;
     font-size: 1rem;
     margin-bottom: 1.5rem;
@@ -332,7 +382,8 @@
     background-position: right 0.5rem center;
     background-size: 1.5em;
     padding-right: 2rem;
-  }
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
 
 /* Progress Section Styles */
 .progress-section {
@@ -341,7 +392,7 @@
     border-radius: 12px;
     background: #f8f9fa;
     border: 1px solid #e9ecef;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
 }
 
@@ -351,18 +402,21 @@
 
 .progress-container {
     width: 100%;
-    height: 6px;
-    background-color: #e9ecef;
+    height: 4px;
+    background-color: rgba(229, 231, 235, 0.4);
     border-radius: 12px;
     overflow: hidden;
     margin: 20px 0;
+    box-shadow: none;
 }
 
 .progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, #4CAF50, #45a049);
+    background: linear-gradient(90deg,
+            rgba(76, 175, 80, 0.8),
+            rgba(69, 160, 73, 0.8));
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: none;
 }
 
 .progress-status {
@@ -398,8 +452,8 @@
 .processing-log {
     max-height: 400px;
     overflow-y: auto;
-    background: #fff;
-    border: 1px solid #e9ecef;
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
     border-radius: 8px;
     padding: 16px;
     font-family: 'SF Mono', 'Consolas', monospace;
@@ -407,6 +461,8 @@
     line-height: 1.6;
     scrollbar-width: thin;
     scrollbar-color: #cbd5e0 #f8f9fa;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .processing-log.hidden {
@@ -452,10 +508,21 @@
     color: #2d3436;
 }
 
-.log-entry.status { color: #2f855a; }
-.log-entry.info { color: #2b6cb0; }
-.log-entry.warn { color: #c05621; }
-.log-entry.error { color: #c53030; }
+.log-entry.status {
+    color: #2f855a;
+}
+
+.log-entry.info {
+    color: #2b6cb0;
+}
+
+.log-entry.warn {
+    color: #c05621;
+}
+
+.log-entry.error {
+    color: #c53030;
+}
 
 .phase-indicator {
     display: flex;
@@ -478,7 +545,7 @@
 .phase-step {
     position: relative;
     z-index: 2;
-    background: #f8f9fa;
+    background: transparent;
     padding: 0 12px;
     font-size: 0.85em;
     color: #718096;
@@ -491,7 +558,7 @@
     position: absolute;
     width: 12px;
     height: 12px;
-    background: #e2e8f0;
+    background: rgba(226, 232, 240, 0.5);
     border-radius: 50%;
     bottom: -20px;
     left: 50%;
@@ -505,7 +572,7 @@
 }
 
 .phase-step.active::after {
-    background: #48bb78;
+    background: rgba(72, 187, 120, 0.8);
     box-shadow: 0 0 0 4px rgba(72, 187, 120, 0.2);
 }
 
@@ -514,13 +581,20 @@
 }
 
 .phase-step.completed::after {
-    background: #48bb78;
+    background: rgba(72, 187, 120, 0.8);
 }
 
 /* Animation for log entries */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .log-entry {
@@ -528,10 +602,21 @@
 }
 
 /* Status colors with better contrast */
-.log-entry.status .log-message { color: #2f855a; }
-.log-entry.info .log-message { color: #2b6cb0; }
-.log-entry.warn .log-message { color: #c05621; }
-.log-entry.error .log-message { color: #c53030; }
+.log-entry.status .log-message {
+    color: #2f855a;
+}
+
+.log-entry.info .log-message {
+    color: #2b6cb0;
+}
+
+.log-entry.warn .log-message {
+    color: #c05621;
+}
+
+.log-entry.error .log-message {
+    color: #c53030;
+}
 
 /* Hide scrollbar when not needed */
 .processing-log {
@@ -544,8 +629,15 @@
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Context Inputs Styles */
@@ -567,11 +659,12 @@
     height: 150px;
     resize: none;
     padding: 0.75rem;
-    border: 1px solid var(--border-color);
+    border: none;
     border-radius: 4px;
     font-size: 0.9rem;
     line-height: 1.5;
     background-color: var(--background-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .modal-actions {
@@ -587,17 +680,19 @@
 
 /* Priority Categories Styling */
 .priority-category {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     border-radius: 6px;
     overflow: hidden;
+    border: none;
 }
 
 .category-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1rem;
+    padding: 1rem;
     cursor: pointer;
+    background: transparent;
 }
 
 .category-header h4 {
@@ -617,16 +712,16 @@
 
 /* Priority Colors */
 .priority-critical .category-header {
-    background-color: #fee2e2;
+    background-color: rgba(254, 226, 226, 0.4);
     color: #991b1b;
 }
 
 .priority-important .category-header {
-    background-color: #fef3c7;
+    background-color: rgba(254, 243, 199, 0.4);
     color: #92400e;
 }
 
 .priority-optional .category-header {
-    background-color: #dbeafe;
+    background-color: rgba(219, 234, 254, 0.4);
     color: #1e40af;
 }
