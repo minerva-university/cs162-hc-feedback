@@ -42,6 +42,7 @@ jobs:
         run: |
           sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@$SSH_IP <<'EOF'
           set -e
+          sudo systemctl stop nginx
           cd ${{ secrets.PROJECT_ROOT }}
           git pull origin dev
           docker compose -f docker-compose.dev.yml down --remove-orphans
