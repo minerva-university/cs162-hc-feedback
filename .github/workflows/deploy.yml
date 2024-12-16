@@ -54,7 +54,7 @@ jobs:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           PROJECT_ROOT: ${{ secrets.PROJECT_ROOT }}
 
-        #- name: Send Failure Message to Discord
+        # - name: Send Failure Message to Discord
         #  if: failure()
         #  run: |
         #    curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=🚨 Deployment Failed for SQLite App"
