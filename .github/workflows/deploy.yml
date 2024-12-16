@@ -44,7 +44,7 @@ jobs:
           set -e
           sudo systemctl stop nginx
           cd ${{ secrets.PROJECT_ROOT }}
-          git pull origin dev
+          git pull origin main
           docker compose -f docker-compose.prod.yml down --remove-orphans
           docker compose -f docker-compose.prod.yml up -d --build
           EOF
