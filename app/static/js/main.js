@@ -566,6 +566,7 @@ function parseSpecificFeedback(feedbackString) {
   return steps;
 }
 
+
 function saveContext() {
   currentContext = {
     assignmentDescription: document.getElementById("assignmentDescription")
@@ -574,6 +575,7 @@ function saveContext() {
   };
   hideModal("contextModal");
 
+  
   // Update the context button to show status
   const contextButton = document.querySelector(
     'button[onclick="showModal(\'contextModal\')"]'
