@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 import sys
 import os
 import logging
+import json
 
 # Configure logging for tests
 logging.basicConfig(
@@ -17,6 +18,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(current_dir)
 sys.path.insert(0, project_root)
 
+from app import create_app
+from app.models import db
 from app.ai.agent_footnote import (
     generate_footnote,
     get_score_threshold,
@@ -114,9 +117,146 @@ class TestAgentFootnote(unittest.TestCase):
         logger.info("Verified error handling")
         self.assertIsNone(result)
 
+class TestAgentFootnoteRoutes(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        logger.info("Setting up TestAgentFootnoteRoutes class")
+        # Set environment variable for testing
+        os.environ['SCORE_THRESHOLD'] = '0.6'
+        
+        cls.app = create_app()
+        cls.app.config.update({
+            'TESTING': True,
+            'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
+            'SQLALCHEMY_TRACK_MODIFICATIONS': False
+        })
+        cls.client = cls.app.test_client()
+        cls.ctx = cls.app.app_context()
+        cls.ctx.push()
+
+    @classmethod
+    def tearDownClass(cls):
+        # Clean up environment variable after tests
+        if 'SCORE_THRESHOLD' in os.environ:
+            del os.environ['SCORE_THRESHOLD']
+        cls.ctx.pop()
+        logger.info("Tearing down TestAgentFootnoteRoutes class")
+
+    def setUp(self):
+        logger.info(f"Setting up test: {self._testMethodName}")
+        # Override any existing threshold value
+        os.environ['SCORE_THRESHOLD'] = '0.6'  # Set threshold for testing
+
+    def tearDown(self):
+        logger.info(f"Tearing down test: {self._testMethodName}")
+        
+    @patch('app.routes.generate_footnote')
+    def test_api_footnote_success(self, mock_generate):
+        logger.info("Testing footnote API endpoint - success case")
+        mock_generate.return_value = "Test footnote content"
+        
+        payload = {
+            "text": "Sample text",
+            "hc_name": "Test HC",
+            "score": 0.8,
+            "context": {"assignmentDescription": "Test assignment"}
+        }
+        
+        response = self.client.post(
+            '/api/footnote',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.data)
+        self.assertIn('footnote', data)
+        self.assertEqual(data['footnote'], "Test footnote content")
+        logger.info("Footnote API success test passed")
+
+    def test_api_footnote_low_score(self):
+        logger.info("Testing footnote API endpoint - low score case")
+        payload = {
+            "text": "Sample text",
+            "hc_name": "Test HC",
+            "score": 0.4,  # Score below threshold (0.6)
+            "context": {"assignmentDescription": "Test assignment"}
+        }
+        
+        response = self.client.post(
+            '/api/footnote',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        
+        logger.debug(f"Response status: {response.status_code}")
+        logger.debug(f"Response data: {response.data}")
+        
+        self.assertEqual(response.status_code, 403, "Expected 403 for score below threshold")
+        data = json.loads(response.data)
+        self.assertEqual(data['error'], "Score too low")
+
+    def test_api_footnote_missing_fields(self):
+        logger.info("Testing footnote API endpoint - missing fields")
+        payload = {
+            "text": "Sample text"
+            # Missing required fields
+        }
+        
+        response = self.client.post(
+            '/api/footnote',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.data)
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], "Missing required fields")
+        logger.info("Footnote API missing fields test passed")
+
+    def test_get_threshold_endpoint(self):
+        logger.info("Testing get threshold endpoint")
+        response = self.client.get('/api/threshold')
+        
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.data)
+        self.assertIn('threshold', data)
+        self.assertIsInstance(data['threshold'], float)
+        logger.info(f"Retrieved threshold: {data['threshold']}")
+
+    @patch('app.routes.generate_footnote')
+    def test_api_footnote_error_handling(self, mock_generate):
+        logger.info("Testing footnote API endpoint - error handling")
+        mock_generate.side_effect = Exception("Test error")
+        
+        payload = {
+            "text": "Sample text",
+            "hc_name": "Test HC",
+            "score": 0.8
+        }
+        
+        response = self.client.post(
+            '/api/footnote',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        
+        self.assertEqual(response.status_code, 500)
+        data = json.loads(response.data)
+        self.assertIn('error', data)
+        logger.info("Footnote API error handling test passed")
+
 if __name__ == '__main__':
     logger.info("Starting test suite execution")
     test_suite = unittest.TestLoader().loadTestsFromTestCase(TestAgentFootnote)
+    test_result = unittest.TextTestRunner(verbosity=2).run(test_suite)
+    logger.info(f"Test execution completed. Tests run: {test_result.testsRun}, "
+               f"Failures: {len(test_result.failures)}, "
+               f"Errors: {len(test_result.errors)}")
+
+    logger.info("Starting test suite execution")
+    test_suite = unittest.TestLoader().loadTestsFromTestCase(TestAgentFootnoteRoutes)
     test_result = unittest.TextTestRunner(verbosity=2).run(test_suite)
     logger.info(f"Test execution completed. Tests run: {test_result.testsRun}, "
                f"Failures: {len(test_result.failures)}, "
