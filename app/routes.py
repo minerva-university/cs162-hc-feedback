@@ -7,6 +7,7 @@ from .ai.agent_footnote import generate_footnote, check_score_threshold, get_sco
 
 # Create module-specific logger
 logger = get_logger('routes')  # Use this instead
+from .ai.agent_footnote import generate_footnote, check_score_threshold, get_score_threshold
 
 main = Blueprint("main", __name__)
 

@@ -3,10 +3,8 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from pathlib import Path
 from .logging_config import get_logger  # Correct import
-
 # Create module-specific logger
 logger = get_logger('ai_config')
-
 gemini_model_name = os.getenv("GEMINI_MODEL_NAME", "gemini-1.5-flash")
 gemini_model = genai.GenerativeModel(gemini_model_name)
 
