@@ -9,7 +9,6 @@ COPY . /app
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install logging
 
 # Expose the port your app runs on
 EXPOSE 8080
