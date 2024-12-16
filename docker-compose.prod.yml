@@ -1,6 +1,6 @@
 version: "3"
 services:
-  hc-feedback:
+  hc-feedback-tool:
     container_name: cs162-hc-feedback
     build: .
     restart: always
@@ -27,7 +27,7 @@ services:
       - /etc/nginx/conf.d:/etc/nginx/conf.d   # Custom NGINX configurations
       - ./data/certbot:/var/www/certbot        # Certbot validation directory
     depends_on:
-      - hc-feedback
+      - hc-feedback-tool
 
 volumes: 
   nginx_secrets:
