@@ -49,7 +49,7 @@ jobs:
           docker compose -f docker-compose.prod.yml up -d --build
           EOF
         env:
-          SSH_IP: ${{ secrets.SSH_IP_PROD }}
+          SSH_IP_PROD: ${{ secrets.SSH_IP_PROD }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           PROJECT_ROOT: ${{ secrets.PROJECT_ROOT }}
@@ -61,7 +61,7 @@ jobs:
 
       # - name: Print Container Status
       #   run: |
-      #     sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@$SSH_IP 'cd ${{ secrets.PROJECT_ROOT }} && docker compose -f docker-compose.dev.yml ps'
+      #     sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@$SSH_IP_PROD 'cd ${{ secrets.PROJECT_ROOT }} && docker compose -f docker-compose.dev.yml ps'
 
       #- name: Deployment Successful Message
       #  run: |
