@@ -10,7 +10,7 @@ services:
       - "8080:8080"
     volumes:
       - ./instance:/app/instance  # Persist the SQLite database file
-  
+
   nginx:
     container_name: nginx
     image: jonasal/nginx-certbot
@@ -29,5 +29,5 @@ services:
     depends_on:
       - hc-feedback
 
-volumes: 
+volumes:
   nginx_secrets:
