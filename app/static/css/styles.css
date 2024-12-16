@@ -132,6 +132,16 @@
     overflow-y: auto;
     /* Add scrollbar for overflow */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.feedback-textarea:focus {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.08);
+    outline: none;
 }
 
 /* Feedback Results */
@@ -187,9 +197,9 @@
 }
 
 .steps-list {
-    margin-top: 1rem;
+    margin-top: 0;
+    padding: 0.5rem;
     background: transparent;
-    border: none;
 }
 
 .steps-list.hidden {
@@ -197,12 +207,15 @@
 }
 
 .step-item {
-    background-color: rgba(245, 245, 245, 0.5);
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.95),
+        rgba(255, 255, 255, 0.9)
+    );
     padding: 1.25rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    border: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin: 0.75rem 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
 .step-item:hover {
@@ -226,6 +239,9 @@
     position: relative;
     cursor: pointer;
     transition: all 0.2s ease;
+    margin: 0.5rem 1rem 0.5rem 0.5rem;
+    position: relative;
+    top: 2px;
 }
 
 .step-item input[type="checkbox"]:checked {
@@ -253,11 +269,25 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+    padding: 0.5rem 0;
 }
 
 .step-content p {
     margin: 0;
     color: #374151;
+    position: relative;
+    padding-left: 1rem;
+}
+
+.step-content p:not(:nth-child(2)) strong {
+    opacity: 0.6;
+}
+
+.step-content p:nth-child(2) strong {
+    opacity: 1;
 }
 
 /* Modal Styles */
@@ -298,40 +328,45 @@
     display: none;
 }
 
-/* Tooltip Styles */
+/* Enhanced tooltip styles */
 .tooltip {
     position: relative;
-    display: block;
-    margin: 0.75rem 0 0 0;
-    cursor: default;
-}
-
-.tooltip-text {
-    visibility: visible;
-    position: static;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    transform: none;
-    background-color: rgba(243, 244, 246, 0.8);
-    color: #4b5563;
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    width: auto;
-    font-size: 0.95rem;
-    font-style: italic;
-    line-height: 1.6;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin-top: 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 0.5rem 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .tooltip::before {
-    content: "Why this matters:";
-    display: block;
-    font-size: 0.8rem;
+    content: '\2139';
+    font-size: 1.2rem;
     color: #6b7280;
-    margin-bottom: 0.25rem;
-    font-weight: 500;
+    opacity: 0.8;
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+}
+
+.tooltip-text {
+    flex: 1;
+    background-color: rgba(243, 244, 246, 0.95);
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: #4b5563;
+    line-height: 1.8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+/* Remove the hover state and display properties */
+.tooltip:hover .tooltip-text {
+    display: block;
 }
 
 /* Example and Footnote Modal Styles */
@@ -538,6 +573,7 @@
     left: 0;
     right: 0;
     height: 2px;
+    opacity: 0;
     background: #e2e8f0;
     z-index: 1;
 }
@@ -680,19 +716,25 @@
 
 /* Priority Categories Styling */
 .priority-category {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     border-radius: 6px;
     overflow: hidden;
     border: none;
+    background: transparent;
+    backdrop-filter: blur(8px);
+    margin-bottom: 1.5rem;
 }
 
 .category-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     cursor: pointer;
     background: transparent;
+    padding: 1rem 1.25rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
 }
 
 .category-header h4 {
@@ -712,16 +754,42 @@
 
 /* Priority Colors */
 .priority-critical .category-header {
-    background-color: rgba(254, 226, 226, 0.4);
+    background: linear-gradient(
+        to right,
+        rgba(254, 226, 226, 0.6),
+        rgba(254, 226, 226, 0.4)
+    );
     color: #991b1b;
+    background: linear-gradient(to right,
+            rgba(254, 226, 226, 0.5),
+            rgba(254, 226, 226, 0.3));
 }
 
 .priority-important .category-header {
-    background-color: rgba(254, 243, 199, 0.4);
+    background: linear-gradient(
+        to right,
+        rgba(254, 243, 199, 0.6),
+        rgba(254, 243, 199, 0.4)
+    );
     color: #92400e;
+    background: linear-gradient(to right,
+            rgba(254, 243, 199, 0.5),
+            rgba(254, 243, 199, 0.3));
 }
 
 .priority-optional .category-header {
-    background-color: rgba(219, 234, 254, 0.4);
+    background: linear-gradient(
+        to right,
+        rgba(219, 234, 254, 0.6),
+        rgba(219, 234, 254, 0.4)
+    );
     color: #1e40af;
+    background: linear-gradient(to right,
+            rgba(219, 234, 254, 0.5),
+            rgba(219, 234, 254, 0.3));
+}
+
+/* Ensure category content is always visible */
+.steps-list:not(.hidden) {
+    display: block;
 }
