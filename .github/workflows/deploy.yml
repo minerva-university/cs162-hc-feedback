@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - dev
+      - main
   workflow_dispatch:
 
 jobs:
@@ -45,11 +45,11 @@ jobs:
           sudo systemctl stop nginx
           cd ${{ secrets.PROJECT_ROOT }}
           git pull origin dev
-          docker compose -f docker-compose.dev.yml down --remove-orphans
-          docker compose -f docker-compose.dev.yml up -d --build
+          docker compose -f docker-compose.prod.yml down --remove-orphans
+          docker compose -f docker-compose.prod.yml up -d --build
           EOF
         env:
-          SSH_IP: ${{ secrets.SSH_IP }}
+          SSH_IP: ${{ secrets.SSH_IP_PROD }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           PROJECT_ROOT: ${{ secrets.PROJECT_ROOT }}
