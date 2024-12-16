@@ -5,7 +5,7 @@ from .agent_specific_feedback import generate_checklist, evaluate_pitfall
 from .agent_evaluation import evaluate_all_criteria
 from .ai_config import initialize_analysis_model, initialize_evaluation_model
 from .logging_config import logger
-import logging 
+import logging
 
 analysis_model = initialize_analysis_model()
 evaluation_model = initialize_evaluation_model()
