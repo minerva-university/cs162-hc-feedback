@@ -67,8 +67,40 @@
     <div id="feedbackResults" class="feedback-results hidden">
         <p id="feedbackText" class="feedback-text"></p>
 
+        <!-- Add Score Display -->
+        <div class="score-display">
+            <h3>Evaluation Score</h3>
+            <div class="score-container">
+                <div class="score-number"><span id="scoreValue">0</span>%</div>
+                <div id="scoreMessage" class="score-message"></div>
+            </div>
+        </div>
+
+        <!-- Add Generate Footnote Button -->
+        <button id="generateFootnoteBtn" class="btn" disabled onclick="generateFootnote(false)">
+            Generate Example Footnote
+        </button>
+
+        <!-- Add Generated Footnote Section -->
+        <div id="generatedFootnote" class="generated-footnote hidden">
+            <div class="footnote-header">
+                <h3>Your Generated Footnote</h3>
+                <button id="regenerateFootnoteBtn" class="regenerate-btn" onclick="generateFootnote(true)">
+                    <span class="btn-text">Regenerate</span>
+                </button>
+            </div>
+            <div class="generated-footnote-content">
+                <div class="footnote-loading">
+                    <div class="loader"></div>
+                    <span>Generating your footnote...</span>
+                </div>
+                <div class="footnote-text"></div>
+            </div>
+        </div>
+
+        <!-- Modify actionable steps to use mark as done buttons -->
         <div class="actionable-steps">
-            <h3>Actionable Next Steps (Optional)</h3>
+            <h3>Actionable Next Steps</h3>
             <div id="actionableSteps" class="steps-list"></div>
         </div>
     </div>
