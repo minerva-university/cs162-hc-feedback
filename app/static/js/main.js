@@ -691,17 +691,16 @@ async function generateFootnote() {
       throw new Error(data.error || "Failed to generate footnote");
     }
 
-    // Show the footnote in the modal
-    const modal = document.getElementById("footnoteModal");
-    const modalContent = modal.querySelector(".modal-content");
-    modalContent.innerHTML = `
-          <h2>Generated Footnote Example</h2>
-          <div class="footnote-content">
-              <p>${data.footnote}</p>
-          </div>
-          <button onclick="hideModal('footnoteModal')" class="btn">Close</button>
-      `;
-    showModal("footnoteModal");
+    // Display the generated footnote in the dedicated section
+    const generatedFootnoteSection = document.getElementById("generatedFootnote");
+    generatedFootnoteSection.innerHTML = `
+        <h3>Generated Footnote</h3>
+        <div class="generated-footnote-content">
+            <p>${data.footnote}</p>
+        </div>
+    `;
+    generatedFootnoteSection.classList.remove("hidden");
+
   } catch (error) {
     console.error("Error generating footnote:", error);
     alert("Error generating footnote: " + error.message);

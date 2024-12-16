@@ -831,3 +831,27 @@
     opacity: 1;
     background-color: #4b5563;
 }
+
+/* ...existing code... */
+
+.generated-footnote {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(to right, rgba(243, 244, 246, 0.6), rgba(243, 244, 246, 0.3));
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.generated-footnote h3 {
+    color: #4b5563;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.generated-footnote-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #1f2937;
+}
+
+/* ...existing code... */
