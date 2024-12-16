@@ -500,7 +500,11 @@ async function submitFeedback(event) {
       "info",
       "Complete"
     );
-    addLogEntry("Thank you for using HC Feedback! 🎉", "status", "Complete");
+    addLogEntry(
+      "Thank you for using HC Feedback 🎉 Good luck on your assignment!",
+      "status",
+      "Complete"
+    );
   } catch (error) {
     console.error("Error:", error);
     updateProgress(100, "Error occurred", error.message, "error", "Error");
@@ -525,41 +529,99 @@ function displayFeedback(feedback) {
   const stepsContainer = document.getElementById("actionableSteps");
   stepsContainer.innerHTML = ""; // Clear existing steps
 
-  const actionableSteps = parseSpecificFeedback(feedback.specific_feedback);
+  const steps = parseSpecificFeedback(feedback.specific_feedback);
+  const categories = {
+    CRITICAL: {
+      title: "Critical (Must Fix)",
+      class: "priority-critical",
+      steps: [],
+    },
+    IMPORTANT: {
+      title: "Important (Should Fix)",
+      class: "priority-important",
+      steps: [],
+    },
+    OPTIONAL: {
+      title: "Optional (Could Fix)",
+      class: "priority-optional",
+      steps: [],
+    },
+  };
 
-  actionableSteps.forEach((step) => {
-    const stepElement = document.createElement("div");
-    stepElement.className = "step-item";
+  // Group steps by priority
+  steps.forEach((step) => categories[step.priority].steps.push(step));
 
-    stepElement.innerHTML = `
+  // Create category sections
+  Object.entries(categories).forEach(([priority, data]) => {
+    if (data.steps.length > 0) {
+      const categorySection = document.createElement("div");
+      categorySection.className = `priority-category ${data.class}`;
+
+      const header = document.createElement("div");
+      header.className = "category-header";
+      header.innerHTML = `
+          <h4>${data.title} (${data.steps.length})</h4>
+          <button class="toggle-category">▼</button>
+      `;
+
+      const stepsList = document.createElement("div");
+      stepsList.className = "steps-list"; // Remove hidden by default
+
+      data.steps.forEach((step) => {
+        const stepElement = document.createElement("div");
+        stepElement.className = "step-item";
+
+        // Format change and why text with better spacing
+        const formattedWhy = `${step.change}\n\n${step.why
+            .trim()
+            .replace(/\s+/g, ' ')
+            .replace(/\. /g, '.\n')
+            .replace(/; /g, ';\n')
+            .replace(/\n+/g, '\n')
+            .trim()}`;
+
+        stepElement.innerHTML = `
             <input type="checkbox" ${step.completed ? "checked" : ""}>
-            <p><strong>Change:</strong> ${
-              step.change
-            }</p>  </p> <p><strong>From:</strong> ${
-      step.from
-    }</p><p><strong>To:</strong> ${step.to}</p>
-            <div class="tooltip">
-                ℹ️
-                <span class="tooltip-text">${step.why}</span>
+            <div class="step-content">
+                <p><strong>From:</strong> ${step.from}</p>
+                <p><strong>To:</strong> ${step.to}</p>
+                <div class="tooltip">
+                    <div class="tooltip-text">${formattedWhy}</div>
+                </div>
             </div>
-        `; // Added elements for change, from, and to
+        `;
+        stepsList.appendChild(stepElement);
+      });
 
-    stepsContainer.appendChild(stepElement);
+      categorySection.appendChild(header);
+      categorySection.appendChild(stepsList);
+      stepsContainer.appendChild(categorySection);
+
+      // Add toggle functionality
+      header
+        .querySelector(".toggle-category")
+        .addEventListener("click", function () {
+          const stepsList = this.parentElement.nextElementSibling;
+          const isHidden = stepsList.classList.toggle("hidden");
+          this.textContent = isHidden ? "▶" : "▼";
+        });
+    }
   });
 }
 
 function parseSpecificFeedback(feedbackString) {
   const steps = [];
   const regex =
-    /- \[(x| )] Change: (.+)\n  From: (.+)\n  To: (.+)\n  Why: (.+)/g; // Modified regex
+    /- \[(x| )] Priority: (CRITICAL|IMPORTANT|OPTIONAL)\n\s*Change: (.+)\n\s*From: (.+)\n\s*To: (.+)\n\s*Why: (.+)/g;
   let match;
 
   while ((match = regex.exec(feedbackString)) !== null) {
     steps.push({
-      change: match[2].trim(), // Capture "Change"
-      from: match[3].trim(), // Capture "From"
-      to: match[4].trim(), // Capture "To"
-      why: match[5].trim(), // Capture "Why"
+      priority: match[2],
+      change: match[3].trim(),
+      from: match[4].trim(),
+      to: match[5].trim(),
+      why: match[6].trim(),
       completed: match[1] === "x",
     });
   }
@@ -576,7 +638,7 @@ function saveContext() {
 
   // Update the context button to show status
   const contextButton = document.querySelector(
-    'button[onclick="showModal(\'contextModal\')"]'
+    "button[onclick=\"showModal('contextModal')\"]"
   );
   contextButton.classList.add("has-context");
   contextButton.textContent = "Update Context";
