@@ -42,6 +42,7 @@ jobs:
         run: |
           sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@$SSH_IP <<'EOF'
           set -e
+          sudo systemctl stop nginx
           cd ${{ secrets.PROJECT_ROOT }}
           git pull origin dev
           docker compose -f docker-compose.dev.yml down --remove-orphans
@@ -53,7 +54,7 @@ jobs:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           PROJECT_ROOT: ${{ secrets.PROJECT_ROOT }}
 
-        #- name: Send Failure Message to Discord
+        # - name: Send Failure Message to Discord
         #  if: failure()
         #  run: |
         #    curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=🚨 Deployment Failed for SQLite App"

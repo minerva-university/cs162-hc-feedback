@@ -1,7 +1,7 @@
 # Database Documentation
 
 ## Overview
-The application uses SQLite with SQLAlchemy ORM to store and manage HC (Habits of Craft) data. The database replaces the previous JSON-based storage system for improved reliability and performance.
+The application uses SQLite with SQLAlchemy ORM to store and manage HC data. The database replaces the previous JSON-based storage system for improved reliability and performance.
 
 ## Database Schema
 
