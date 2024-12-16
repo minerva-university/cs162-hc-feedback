@@ -29,11 +29,17 @@ Consider the following context:{context_info if context_info else ' No additiona
 Analyze specifically against this {criterion_type}:
 "{criterion}"
 
-Provide a specific change AND explanation in this format:
-- [ ] Change: <what needs to change>
+Provide a specific change, priority level, and explanation in this format:
+- [ ] Priority: <CRITICAL|IMPORTANT|OPTIONAL>
+  Change: <what needs to change>
   From: <specific part that needs change>
   To: <specific suggested revision>
   Why: <one-line, 75-character explanation of how this change helps pass the criterion from a FAIL to a PASS. Be straightforward. No need complete sentence. Skip "This revision...">
+
+Guidelines for priority levels:
+CRITICAL - Core issues that significantly impact HC application
+IMPORTANT - Issues that would notably improve the application
+OPTIONAL - Minor improvements that would enhance but aren't essential
 
 The Why section should be specific to this change and criterion.
 Focus on the most important change needed.
@@ -87,18 +93,28 @@ Response: {assignment_text}
 
 
 def format_feedback_for_display(feedback_items, include_why=False):
-    """Format feedback items, optionally including or excluding Why sections"""
-    logger.info("Formatting feedback for display.")
-    display_items = []
+    """Format feedback items grouped by priority"""
+    logger.info("Formatting feedback for display with priorities")
+    categories = {
+        "CRITICAL": [],
+        "IMPORTANT": [],
+        "OPTIONAL": []
+    }
+
     for item in feedback_items:
         lines = item.split("\n")
-        if not include_why:
-            # Filter out Why lines
-            lines = [line for line in lines if not line.strip().startswith("Why:")]
-        display_items.append("\n".join(lines))
-    formatted_feedback = "\n\n".join(display_items)
-    logger.info(f"Formatted feedback: {formatted_feedback}")
-    return formatted_feedback
+        priority_line = next((line for line in lines if "Priority:" in line), None)
+        if priority_line:
+            priority = priority_line.split("Priority:")[1].strip()
+            categories[priority].append("\n".join(lines))
+
+    # Format by priority
+    formatted_items = []
+    for priority in ["CRITICAL", "IMPORTANT", "OPTIONAL"]:
+        if categories[priority]:
+            formatted_items.extend(categories[priority])
+
+    return "\n\n".join(formatted_items)
 
 
 def generate_checklist(

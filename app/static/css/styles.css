@@ -182,6 +182,13 @@
 
 .steps-list {
     margin-top: 1rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-top: none;
+}
+
+.steps-list.hidden {
+    display: none;
 }
 
 .step-item {
@@ -189,6 +196,12 @@
     padding: 0.75rem;
     border-radius: 4px;
     margin-bottom: 0.75rem;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.step-item:last-child {
+    border-bottom: none;
 }
 
 .step-item input[type="checkbox"] {
@@ -199,6 +212,14 @@
 .step-item span {
     flex: 1;
     line-height: 1.4;
+}
+
+.step-content {
+    margin-left: 2rem;
+}
+
+.step-content p {
+    margin: 0.5rem 0;
 }
 
 /* Modal Styles */
@@ -562,4 +583,50 @@
 
 .btn.has-context {
     background-color: var(--secondary-color);
+}
+
+/* Priority Categories Styling */
+.priority-category {
+    margin-bottom: 1.5rem;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+}
+
+.category-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.toggle-category {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    color: inherit;
+}
+
+/* Priority Colors */
+.priority-critical .category-header {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.priority-important .category-header {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.priority-optional .category-header {
+    background-color: #dbeafe;
+    color: #1e40af;
 }
