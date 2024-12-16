@@ -1,6 +1,9 @@
 from .ai_config import initialize_analysis_model
-from .logging_config import logger
+from .logging_config import get_logger
 import logging
+
+# Create module-specific logger
+logger = get_logger('agent_precheck')
 
 model = initialize_analysis_model()
 

@@ -1,6 +1,9 @@
 from .ai_config import initialize_analysis_model
-from .logging_config import logger  # Import the shared logger or setup
+from .logging_config import get_logger  # Correct import
 import logging
+
+# Create module-specific logger
+logger = get_logger('agent_general_feedback')
 
 model = initialize_analysis_model()
 

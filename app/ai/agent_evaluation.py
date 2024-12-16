@@ -1,6 +1,19 @@
-from .ai_config import initialize_evaluation_model
-from .logging_config import logger  # Import the shared logger or setup
+import os
+import sys
+
+# Adjust the import paths if the script is run directly
+if __name__ == "__main__" and __package__ is None:
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+    from app.ai.ai_config import initialize_evaluation_model
+    from app.ai.logging_config import get_logger
+else:
+    from .ai_config import initialize_evaluation_model
+    from .logging_config import get_logger
+
 import logging
+
+# Create module-specific logger
+logger = get_logger('agent_evaluation')
 
 model = initialize_evaluation_model()
 
@@ -38,3 +51,9 @@ def evaluate_all_criteria(assignment_text, criteria):
         results.append(result)
     logger.info(f"All criteria evaluation results: {results}")
     return results
+
+if __name__ == "__main__":
+    # Example usage
+    assignment_text = "This is a sample assignment text."
+    criteria = ["Criterion 1", "Criterion 2"]
+    print(evaluate_all_criteria(assignment_text, criteria))

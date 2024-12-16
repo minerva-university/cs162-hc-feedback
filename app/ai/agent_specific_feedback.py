@@ -1,8 +1,10 @@
 from .ai_config import initialize_analysis_model
 from .agent_evaluation import evaluate_all_criteria
-from .logging_config import logger
+from .logging_config import get_logger  # Correct import
 import logging
 
+# Create module-specific logger
+logger = get_logger('agent_specific_feedback')
 
 analysis_model = initialize_analysis_model()
 

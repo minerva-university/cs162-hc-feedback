@@ -1,8 +1,11 @@
 from flask import Blueprint, render_template, jsonify, request, current_app
-from .ai.main import analyze_hc  # Import your analyze_hc function
+from .ai.main import analyze_hc
 from .models import Cornerstone, HC
-from .ai.logging_config import logger
+from .ai.logging_config import get_logger  # Change this line
 from .ai.agent_precheck import check_input_quality
+
+# Create module-specific logger
+logger = get_logger('routes')  # Use this instead
 
 main = Blueprint("main", __name__)
 
@@ -27,9 +30,9 @@ def index():
 @main.route("/api/hcs/<cornerstone>")
 def get_hcs(cornerstone):
     logger.info(f"Fetching HCs for cornerstone: {cornerstone}")
-    cornerstone_name = cornerstone.strip().upper().replace("_", " ")
+    # Modify the query to match exact name
     cornerstone_obj = Cornerstone.query.filter(
-        Cornerstone.name.ilike(f"%{cornerstone_name}%")
+        Cornerstone.name == cornerstone.strip()
     ).first_or_404()
     logger.info(f"Found cornerstone: {cornerstone_obj.name}")
 
