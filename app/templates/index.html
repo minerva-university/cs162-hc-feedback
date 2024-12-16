@@ -2,7 +2,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-
 <div class="container">
     <!-- HC List Section -->
     <div id="hcList" class="hc-list">
@@ -25,7 +24,6 @@
         </select>
     </div>
 
-
     <!-- Action Buttons -->
     <div class="action-buttons">
         <button id="footnoteButton" class="btn" onclick="showModal('footnoteModal')" disabled>
@@ -42,11 +40,28 @@
         <!-- Terms Checkbox -->
         <div class="terms-container">
             <input type="checkbox" id="termsAgree" required>
-            <label for="termsAgree">By submitting, I agree to the terms and conditions</label>
+            <label for="termsAgree">By submitting, I agree to the <a href="#"
+                    onclick="showModal('termsModal'); return false;">terms and conditions</a></label>
         </div>
 
         <button type="submit" class="submit-btn">REQUEST FEEDBACK</button>
     </form>
+
+    <!-- Progress Section -->
+    <div id="progressSection" class="progress-section hidden">
+        <div class="phase-indicator">
+            <div class="phase-step">Input Analysis</div>
+            <div class="phase-step">Content Validation</div>
+            <div class="phase-step">HC Processing</div>
+            <div class="phase-step">Feedback Generation</div>
+        </div>
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <p id="progressStatus" class="progress-status">Processing...</p>
+        <button id="toggleLog" class="toggle-log-btn">Show Processing Details</button>
+        <div id="processingLog" class="processing-log hidden"></div>
+    </div>
 
     <!-- Feedback Results -->
     <div id="feedbackResults" class="feedback-results hidden">
@@ -93,6 +108,52 @@
             <h2>Notice</h2>
             <p>You will be directed to the HC Handbook.</p>
             <button onclick="hideModal('handbookModal')" class="btn">Close</button>
+        </div>
+    </div>
+
+    <!-- Terms and Conditions Modal -->
+    <div id="termsModal" class="modal hidden">
+        <div class="modal-content terms-modal">
+            <h2>Terms and Conditions</h2>
+            <div class="terms-content">
+                <h3>1. Purpose and Nature of Service</h3>
+                <p>This HC Feedback Tool is provided as an assistive learning resource only. It is designed to offer
+                    suggestions and feedback on HC applications but should not be considered as definitive or
+                    authoritative guidance.</p>
+
+                <h3>2. Disclaimer of Academic Responsibility</h3>
+                <p>We expressly disclaim any responsibility for:</p>
+                <ul>
+                    <li>Your academic performance or grades</li>
+                    <li>The accuracy or completeness of the feedback provided</li>
+                    <li>Any academic decisions made based on the tool's suggestions</li>
+                </ul>
+
+                <h3>3. Usage Guidelines</h3>
+                <p>By using this tool, you acknowledge that:</p>
+                <ul>
+                    <li>The feedback provided is suggestive, not prescriptive</li>
+                    <li>You should always verify suggestions with official HC documentation</li>
+                    <li>Your professors and TAs are the final authority on HC applications</li>
+                </ul>
+
+                <h3>4. Data Usage</h3>
+                <p>The text you submit will not be stored in our application. Your input will be:</p>
+                <ul>
+                    <li>Processed temporarily to generate feedback</li>
+                    <li>Not retained after the feedback session is complete</li>
+                    <li>Used anonymously for service improvement and research purposes</li>
+                </ul>
+
+                <h3>5. Limitations</h3>
+                <p>The tool:</p>
+                <ul>
+                    <li>Makes no guarantees about feedback accuracy</li>
+                    <li>Should not be your only source of HC guidance</li>
+                    <li>May occasionally be unavailable or produce errors</li>
+                </ul>
+            </div>
+            <button onclick="hideModal('termsModal')" class="btn">Close</button>
         </div>
     </div>
 
