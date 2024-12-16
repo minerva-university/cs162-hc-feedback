@@ -77,7 +77,7 @@
         </div>
 
         <!-- Add Generate Footnote Button -->
-        <button id="generateFootnoteBtn" class="btn" disabled>
+        <button id="generateFootnoteBtn" class="btn" disabled onclick="generateFootnote(false)">
             Generate Example Footnote
         </button>
 
@@ -87,11 +87,10 @@
                 <h3>Your Generated Footnote</h3>
                 <button id="regenerateFootnoteBtn" class="regenerate-btn" onclick="generateFootnote(true)">
                     <span class="btn-text">Regenerate</span>
-                    <div class="loader hidden"></div>
                 </button>
             </div>
             <div class="generated-footnote-content">
-                <div class="footnote-loading hidden">
+                <div class="footnote-loading">
                     <div class="loader"></div>
                     <span>Generating your footnote...</span>
                 </div>

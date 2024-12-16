@@ -12,7 +12,7 @@ def get_score_threshold():
         # Try environment variable first
         env_threshold = os.getenv("SCORE_THRESHOLD")
         if env_threshold is not None:
-            return float(env_threshold)  # Should be 0.01 for 1%
+            return float(env_threshold)  # Should be 0.01 or 1% for testing
 
         # Fall back to app config if available
         if current_app:

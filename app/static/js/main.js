@@ -639,17 +639,29 @@ async function generateFootnote(isRegenerate = false) {
     const selectedHC = document.getElementById("hcSelect").value;
     const score = parseFloat(document.querySelector("#scoreValue").textContent) / 100;
 
-    // Show loading state
-    const footnoteSection = document.getElementById("generatedFootnote");
-    const contentDiv = footnoteSection.querySelector(".generated-footnote-content");
-    const loadingDiv = contentDiv.querySelector(".footnote-loading");
-    const textDiv = contentDiv.querySelector(".footnote-text");
-    const generateBtn = document.getElementById(isRegenerate ? "regenerateFootnoteBtn" : "generateFootnoteBtn");
+    // Show loading state and disable buttons
+    const generateBtn = document.getElementById("generateFootnoteBtn");
+    const regenerateBtn = document.getElementById("regenerateFootnoteBtn");
+    const loadingDiv = document.querySelector(".footnote-loading");
+    const textDiv = document.querySelector(".footnote-text");
+
+    // Disable both buttons during generation
+    generateBtn.disabled = true;
+    if (regenerateBtn) {
+        regenerateBtn.disabled = true;
+        const regenerateLoader = regenerateBtn.querySelector(".loader");
+        const regenerateText = regenerateBtn.querySelector(".btn-text");
+        if (regenerateLoader && regenerateText) {
+            regenerateLoader.classList.remove("hidden");
+            regenerateText.classList.add("hidden");
+        }
+    }
 
     // Show loading state
-    loadingDiv.classList.remove("hidden");
-    textDiv.classList.add("hidden");
-    generateBtn.disabled = true;
+    if (loadingDiv && textDiv) {
+        loadingDiv.classList.remove("hidden");
+        textDiv.classList.add("hidden");
+    }
 
     try {
         const response = await fetch("/api/footnote", {
@@ -674,18 +686,34 @@ async function generateFootnote(isRegenerate = false) {
         }
 
         // Display the generated footnote
+        const footnoteSection = document.getElementById("generatedFootnote");
+        const loadingDiv = footnoteSection.querySelector(".footnote-loading");
+        const textDiv = footnoteSection.querySelector(".footnote-text");
+
+        loadingDiv.style.display = 'none'; // Hide loading completely
         textDiv.innerHTML = `<p>${data.footnote}</p>`;
         footnoteSection.classList.remove("hidden");
-        loadingDiv.classList.add("hidden");
         textDiv.classList.remove("hidden");
+
+        // Hide the initial generate button after first generation
+        if (!isRegenerate) {
+            generateBtn.style.display = 'none';
+        }
 
     } catch (error) {
         console.error("Error generating footnote:", error);
         alert("Error generating footnote: " + error.message);
     } finally {
-        generateBtn.disabled = false;
-        loadingDiv.classList.add("hidden");
-        textDiv.classList.remove("hidden");
+        // Re-enable regenerate button if it exists
+        if (regenerateBtn) {
+            regenerateBtn.disabled = false;
+            const regenerateLoader = regenerateBtn.querySelector(".loader");
+            const regenerateText = regenerateBtn.querySelector(".btn-text");
+            if (regenerateLoader && regenerateText) {
+                regenerateLoader.classList.add("hidden");
+                regenerateText.classList.remove("hidden");
+            }
+        }
     }
 }
 
@@ -701,10 +729,10 @@ function displayStepItem(step, container) {
             <div class="tooltip">
                 <div class="tooltip-text">${step.why}</div>
             </div>
+            <button class="mark-done-btn ${step.completed ? 'completed' : ''}" onclick="toggleStepCompletion(this)">
+                ${step.completed ? 'Done' : 'Mark as Done'}
+            </button>
         </div>
-        <button class="mark-done-btn ${step.completed ? 'completed' : ''}" onclick="toggleStepCompletion(this)">
-            ${step.completed ? 'Done' : 'Mark as Done'}
-        </button>
     `;
 
     container.appendChild(stepElement);

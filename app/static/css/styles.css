@@ -272,6 +272,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 1rem;
 }
 
 .step-content p {
@@ -879,11 +880,6 @@
     margin-left: 0.5rem;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
 /* Step Item Modifications */
 .step-item {
     display: flex;
@@ -912,8 +908,9 @@
 }
 
 .mark-done-btn {
-    align-self: center; /* Center vertically */
-    min-width: 100px; /* Consistent width */
+    align-self: flex-end; /* Align to right */
+    width: 120px; /* Fixed width */
+    margin-top: 1rem; /* Space from tooltip */
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
     background-color: #4b5563;
@@ -922,7 +919,6 @@
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
-    white-space: nowrap;
 }
 
 .mark-done-btn:hover {
@@ -936,7 +932,7 @@
 
 /* Loading state for footnote generation */
 .footnote-loading {
-    display: flex;
+    display: none; /* Hide by default */
     align-items: center;
     justify-content: center;
     padding: 2rem;
@@ -944,38 +940,48 @@
     border-radius: 8px;
 }
 
-.loader {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #3498db;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-right: 0.75rem;
+/* When explicitly shown */
+.footnote-loading.show {
+    display: flex;
 }
 
+/* ...existing code... */
+
 .regenerate-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    margin-left: auto;
     font-size: 0.85rem;
     background-color: #4b5563;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-}
-
-.regenerate-btn:hover {
-    background-color: #374151;
+    transition: all 0.2s ease;
 }
 
 .regenerate-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.regenerate-btn .loader {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+}
+
+.footnote-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    background: rgba(243, 244, 246, 0.5);
+    border-radius: 8px;
+    text-align: center;
 }
 
 /* ...existing code... */
