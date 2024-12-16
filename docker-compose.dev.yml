@@ -1,6 +1,6 @@
 version: "3"
 services:
-  myportfolio:
+  hc-feedback:
     container_name: cs162-hc-feedback
     build: .
     restart: always
