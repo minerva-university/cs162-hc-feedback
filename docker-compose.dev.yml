@@ -24,7 +24,7 @@ services:
       - 443:443
     volumes:
       - nginx_secrets:/etc/letsencrypt         # SSL certificates
-      - ./user_conf.d:/etc/nginx/conf.d   # Custom NGINX configurations
+      - ./conf.d:/etc/nginx/conf.d   # Custom NGINX configurations
       - ./data/certbot:/var/www/certbot        # Certbot validation directory
     depends_on:
       - hc-feedback
