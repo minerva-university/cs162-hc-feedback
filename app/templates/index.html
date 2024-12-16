@@ -83,11 +83,25 @@
 
         <!-- Add Generated Footnote Section -->
         <div id="generatedFootnote" class="generated-footnote hidden">
-            <!-- Content will be populated by JavaScript -->
+            <div class="footnote-header">
+                <h3>Your Generated Footnote</h3>
+                <button id="regenerateFootnoteBtn" class="regenerate-btn" onclick="generateFootnote(true)">
+                    <span class="btn-text">Regenerate</span>
+                    <div class="loader hidden"></div>
+                </button>
+            </div>
+            <div class="generated-footnote-content">
+                <div class="footnote-loading hidden">
+                    <div class="loader"></div>
+                    <span>Generating your footnote...</span>
+                </div>
+                <div class="footnote-text"></div>
+            </div>
         </div>
 
+        <!-- Modify actionable steps to use mark as done buttons -->
         <div class="actionable-steps">
-            <h3>Actionable Next Steps (Optional)</h3>
+            <h3>Actionable Next Steps</h3>
             <div id="actionableSteps" class="steps-list"></div>
         </div>
     </div>

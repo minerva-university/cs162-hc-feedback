@@ -570,46 +570,20 @@ function displayFeedback(feedback) {
       `;
 
       const stepsList = document.createElement("div");
-      stepsList.className = "steps-list"; // Remove hidden by default
+      stepsList.className = "steps-list";
 
-      data.steps.forEach((step) => {
-        const stepElement = document.createElement("div");
-        stepElement.className = "step-item";
-
-        // Format change and why text with better spacing
-        const formattedWhy = `${step.change}\n\n${step.why
-          .trim()
-          .replace(/\s+/g, " ")
-          .replace(/\. /g, ".\n")
-          .replace(/; /g, ";\n")
-          .replace(/\n+/g, "\n")
-          .trim()}`;
-
-        stepElement.innerHTML = `
-            <input type="checkbox" ${step.completed ? "checked" : ""}>
-            <div class="step-content">
-                <p><strong>From:</strong> ${step.from}</p>
-                <p><strong>To:</strong> ${step.to}</p>
-                <div class="tooltip">
-                    <div class="tooltip-text">${formattedWhy}</div>
-                </div>
-            </div>
-        `;
-        stepsList.appendChild(stepElement);
-      });
+      data.steps.forEach(step => displayStepItem(step, stepsList));
 
       categorySection.appendChild(header);
       categorySection.appendChild(stepsList);
       stepsContainer.appendChild(categorySection);
 
       // Add toggle functionality
-      header
-        .querySelector(".toggle-category")
-        .addEventListener("click", function () {
-          const stepsList = this.parentElement.nextElementSibling;
-          const isHidden = stepsList.classList.toggle("hidden");
-          this.textContent = isHidden ? "▶" : "▼";
-        });
+      header.querySelector(".toggle-category").addEventListener("click", function() {
+        const stepsList = this.parentElement.nextElementSibling;
+        const isHidden = stepsList.classList.toggle("hidden");
+        this.textContent = isHidden ? "▶" : "▼";
+      });
     }
   });
 
@@ -660,51 +634,87 @@ function parseSpecificFeedback(feedbackString) {
   return steps;
 }
 
-async function generateFootnote() {
-  const assignmentText = document.getElementById("assignmentText").value;
-  const selectedHC = document.getElementById("hcSelect").value;
-  const score = parseFloat(document.querySelector("#scoreValue").textContent) / 100;
+async function generateFootnote(isRegenerate = false) {
+    const assignmentText = document.getElementById("assignmentText").value;
+    const selectedHC = document.getElementById("hcSelect").value;
+    const score = parseFloat(document.querySelector("#scoreValue").textContent) / 100;
 
-  console.log("Sending score to footnote API:", score); // Debug log
+    // Show loading state
+    const footnoteSection = document.getElementById("generatedFootnote");
+    const contentDiv = footnoteSection.querySelector(".generated-footnote-content");
+    const loadingDiv = contentDiv.querySelector(".footnote-loading");
+    const textDiv = contentDiv.querySelector(".footnote-text");
+    const generateBtn = document.getElementById(isRegenerate ? "regenerateFootnoteBtn" : "generateFootnoteBtn");
 
-  try {
-    const response = await fetch("/api/footnote", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        text: assignmentText,
-        hc_name: selectedHC,
-        score: score, // Already converted to decimal
-        context: currentContext,
-      }),
-    });
+    // Show loading state
+    loadingDiv.classList.remove("hidden");
+    textDiv.classList.add("hidden");
+    generateBtn.disabled = true;
 
-    const data = await response.json();
+    try {
+        const response = await fetch("/api/footnote", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                text: assignmentText,
+                hc_name: selectedHC,
+                score: score,
+                context: currentContext,
+            }),
+        });
 
-    if (!response.ok) {
-      if (response.status === 403) {
-        alert(data.message || "Score too low to generate footnote");
-        return;
-      }
-      throw new Error(data.error || "Failed to generate footnote");
+        const data = await response.json();
+
+        if (!response.ok) {
+            if (response.status === 403) {
+                alert(data.message || "Score too low to generate footnote");
+                return;
+            }
+            throw new Error(data.error || "Failed to generate footnote");
+        }
+
+        // Display the generated footnote
+        textDiv.innerHTML = `<p>${data.footnote}</p>`;
+        footnoteSection.classList.remove("hidden");
+        loadingDiv.classList.add("hidden");
+        textDiv.classList.remove("hidden");
+
+    } catch (error) {
+        console.error("Error generating footnote:", error);
+        alert("Error generating footnote: " + error.message);
+    } finally {
+        generateBtn.disabled = false;
+        loadingDiv.classList.add("hidden");
+        textDiv.classList.remove("hidden");
     }
+}
 
-    // Display the generated footnote in the dedicated section
-    const generatedFootnoteSection = document.getElementById("generatedFootnote");
-    generatedFootnoteSection.innerHTML = `
-        <h3>Generated Footnote</h3>
-        <div class="generated-footnote-content">
-            <p>${data.footnote}</p>
+function displayStepItem(step, container) {
+    const stepElement = document.createElement("div");
+    stepElement.className = "step-item";
+    if (step.completed) stepElement.classList.add("completed");
+
+    stepElement.innerHTML = `
+        <div class="step-content">
+            <p><strong>From:</strong> ${step.from}</p>
+            <p><strong>To:</strong> ${step.to}</p>
+            <div class="tooltip">
+                <div class="tooltip-text">${step.why}</div>
+            </div>
         </div>
+        <button class="mark-done-btn ${step.completed ? 'completed' : ''}" onclick="toggleStepCompletion(this)">
+            ${step.completed ? 'Done' : 'Mark as Done'}
+        </button>
     `;
-    generatedFootnoteSection.classList.remove("hidden");
 
-  } catch (error) {
-    console.error("Error generating footnote:", error);
-    alert("Error generating footnote: " + error.message);
-  }
+    container.appendChild(stepElement);
+}
+
+function toggleStepCompletion(button) {
+  const stepItem = button.closest('.step-item');
+  stepItem.classList.toggle('completed');
+  button.classList.toggle('completed');
+  button.textContent = stepItem.classList.contains('completed') ? 'Done' : 'Mark as Done';
 }
 
 function saveContext() {
