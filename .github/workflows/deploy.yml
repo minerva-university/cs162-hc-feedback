@@ -40,7 +40,7 @@ jobs:
 
       - name: Deploy SQLite App
         run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@$SSH_IP <<'EOF'
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@$SSH_IP_PROD <<'EOF'
           set -e
           sudo systemctl stop nginx
           cd ${{ secrets.PROJECT_ROOT }}
