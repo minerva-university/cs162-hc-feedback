@@ -80,7 +80,7 @@ SCORE_THRESHOLD=0.8 # For footnote generator
    python run.py
    ```
 
-7. Visit `http://127.0.0.1:8080` in your browser. The app is also deployed on http://hc-feedback.duckdns.org/ for development
+7. Visit `http://127.0.0.1:8080` in your browser. The app is also deployed on http://hc-feedback.duckdns.org:8080/ for development
  and on http://hc-feedback-tool.duckdns.org/ for production.
 
 ## Development Guidelines
