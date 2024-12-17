@@ -1,0 +1,33 @@
+version: "3"
+services:
+  hc-feedback-tool:
+    container_name: cs162-hc-feedback
+    build: .
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./instance:/app/instance  # Persist the SQLite database file
+  
+  nginx:
+    container_name: nginx
+    image: jonasal/nginx-certbot
+    restart: always
+    environment:
+      - CERTBOT_EMAIL=duko102003@gmail.com
+      - NGINX_HOST=hc-feedback-tool.duckdns.org  # Domain name
+      - NGINX_PORT=80
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - nginx_secrets:/etc/letsencrypt         # SSL certificates
+      - /etc/nginx/conf.d:/etc/nginx/conf.d   # Custom NGINX configurations
+      - ./data/certbot:/var/www/certbot        # Certbot validation directory
+    depends_on:
+      - hc-feedback-tool
+
+volumes: 
+  nginx_secrets:
