@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - dev
+      - main
   workflow_dispatch:
 
 jobs:
@@ -28,12 +28,8 @@ jobs:
       - name: Install Dependencies
         run: python3-virtualenv/bin/pip install -r requirements.txt
 
-      - name: Grant execute permission to script
-        run: chmod +x ./run_test.sh
-
-      - name: Run tests
-        run: ./run_test.sh
-          
+      - name: Run Tests
+       run: ./run_test.sh
 
   deploy:
     name: "Deploy SQLite App to VPS"
@@ -45,18 +41,16 @@ jobs:
 
       - name: Deploy SQLite App
         run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@$SSH_IP <<'EOF'
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@$SSH_IP_PROD <<'EOF'
           set -e
           sudo systemctl stop nginx
           cd ${{ secrets.PROJECT_ROOT }}
-          git pull origin dev
-          docker compose -f docker-compose.dev.yml down --remove-orphans
-          docker compose -f docker-compose.dev.yml up -d --build
+          git pull origin main
+          docker compose -f docker-compose.prod.yml down --remove-orphans
+          docker compose -f docker-compose.prod.yml up -d --build
           EOF
         env:
-          SSH_IP: ${{ secrets.SSH_IP }}
+          SSH_IP_PROD: ${{ secrets.SSH_IP_PROD }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           PROJECT_ROOT: ${{ secrets.PROJECT_ROOT }}
-
-      
