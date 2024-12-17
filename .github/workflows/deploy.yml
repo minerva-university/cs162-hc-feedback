@@ -12,6 +12,7 @@ jobs:
     name: Run tests
     env:
       TESTING: true
+      GENAI_API_KEY: "dummy_key"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -32,6 +33,7 @@ jobs:
 
       - name: Run tests
         run: ./run_test.sh
+          
 
   deploy:
     name: "Deploy SQLite App to VPS"
