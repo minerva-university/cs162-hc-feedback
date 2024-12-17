@@ -28,6 +28,7 @@ jobs:
         run: python3-virtualenv/bin/pip install -r requirements.txt
 
       - name: Run Tests
+        run: chmod +x ./run_test.sh
         run: ./run_test.sh
 
   deploy:
