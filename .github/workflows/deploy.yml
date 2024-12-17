@@ -29,7 +29,7 @@ jobs:
         run: python3-virtualenv/bin/pip install -r requirements.txt
 
       - name: Run Tests
-       run: ./run_test.sh
+        run: ./run_test.sh  # Fixed indentation here
 
   deploy:
     name: "Deploy SQLite App to VPS"
