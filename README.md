@@ -68,11 +68,11 @@ cs162-hc-feedback/
 4. Set the .env variables:
 Follow the structure below: 
 
-'''
+ ```bash
 GENAI_API_KEY="" # Your GenAI API key - ideally gemini-1.5-flash-8b
 GEMINI_MODEL_NAME="gemini-1.5-flash"
 SCORE_THRESHOLD=0.8 # For footnote generator
-'''
+ ```
 
 6. Run the application:
 
