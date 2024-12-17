@@ -1,6 +1,6 @@
 # HC Feedback System
 
-A Flask-based web application for providing automated feedback on assignments.
+A Flask-based web application for providing automated feedback on assignments. Demo: https://www.youtube.com/watch?v=P-yriMi8zlc&ab_channel=CarlKho
 
 ## Project Structure
 
