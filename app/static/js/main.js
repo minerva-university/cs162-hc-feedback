@@ -39,6 +39,11 @@ document.addEventListener("DOMContentLoaded", function () {
       btn.textContent = "Show Processing Log";
     }
   });
+
+  // Add footnote button handler
+  document
+    .getElementById("generateFootnoteBtn")
+    .addEventListener("click", generateFootnote);
 });
 
 async function loadHCExamples() {
@@ -500,7 +505,11 @@ async function submitFeedback(event) {
       "info",
       "Complete"
     );
-    addLogEntry("Thank you for using HC Feedback! 🎉", "status", "Complete");
+    addLogEntry(
+      "Thank you for using HC Feedback 🎉 Good luck on your assignment!",
+      "status",
+      "Complete"
+    );
   } catch (error) {
     console.error("Error:", error);
     updateProgress(100, "Error occurred", error.message, "error", "Error");
@@ -525,45 +534,215 @@ function displayFeedback(feedback) {
   const stepsContainer = document.getElementById("actionableSteps");
   stepsContainer.innerHTML = ""; // Clear existing steps
 
-  const actionableSteps = parseSpecificFeedback(feedback.specific_feedback);
+  const steps = parseSpecificFeedback(feedback.specific_feedback);
+  const categories = {
+    CRITICAL: {
+      title: "Critical (Must Fix)",
+      class: "priority-critical",
+      steps: [],
+    },
+    IMPORTANT: {
+      title: "Important (Should Fix)",
+      class: "priority-important",
+      steps: [],
+    },
+    OPTIONAL: {
+      title: "Optional (Could Fix)",
+      class: "priority-optional",
+      steps: [],
+    },
+  };
 
-  actionableSteps.forEach((step) => {
-    const stepElement = document.createElement("div");
-    stepElement.className = "step-item";
+  // Group steps by priority
+  steps.forEach((step) => categories[step.priority].steps.push(step));
 
-    stepElement.innerHTML = `
-            <input type="checkbox" ${step.completed ? "checked" : ""}>
-            <p><strong>Change:</strong> ${
-              step.change
-            }</p>  </p> <p><strong>From:</strong> ${
-      step.from
-    }</p><p><strong>To:</strong> ${step.to}</p>
-            <div class="tooltip">
-                ℹ️
-                <span class="tooltip-text">${step.why}</span>
-            </div>
-        `; // Added elements for change, from, and to
+  // Create category sections
+  Object.entries(categories).forEach(([priority, data]) => {
+    if (data.steps.length > 0) {
+      const categorySection = document.createElement("div");
+      categorySection.className = `priority-category ${data.class}`;
 
-    stepsContainer.appendChild(stepElement);
+      const header = document.createElement("div");
+      header.className = "category-header";
+      header.innerHTML = `
+          <h4>${data.title} (${data.steps.length})</h4>
+          <button class="toggle-category">▼</button>
+      `;
+
+      const stepsList = document.createElement("div");
+      stepsList.className = "steps-list";
+
+      data.steps.forEach(step => displayStepItem(step, stepsList));
+
+      categorySection.appendChild(header);
+      categorySection.appendChild(stepsList);
+      stepsContainer.appendChild(categorySection);
+
+      // Add toggle functionality
+      header.querySelector(".toggle-category").addEventListener("click", function() {
+        const stepsList = this.parentElement.nextElementSibling;
+        const isHidden = stepsList.classList.toggle("hidden");
+        this.textContent = isHidden ? "▶" : "▼";
+      });
+    }
   });
+
+  // Update score display and button state
+  const scoreValue = document.getElementById('scoreValue');
+  const scoreMessage = document.getElementById('scoreMessage');
+  const generateFootnoteBtn = document.getElementById("generateFootnoteBtn");
+  const score = feedback.score.total;
+
+  // Display score with one decimal place
+  scoreValue.textContent = score.toFixed(1);
+
+  // Get threshold from backend
+  fetch('/api/threshold').then(response => response.json())
+      .then(data => {
+          const threshold = data.threshold * 100; // Convert from decimal to percentage
+          generateFootnoteBtn.disabled = (score < threshold);
+
+          if (score < threshold) {
+              scoreMessage.textContent = `Your application needs improvement to meet HC requirements (${threshold}% needed)`;
+              scoreMessage.style.color = "#c53030";
+              generateFootnoteBtn.title = `Score (${score.toFixed(1)}%) is below required ${threshold}% threshold`;
+          } else {
+              scoreMessage.textContent = "Great job! Your application meets the HC requirements.";
+              scoreMessage.style.color = "#2f855a";
+              generateFootnoteBtn.title = "Generate example footnote based on your application";
+          }
+      })
+      .catch(error => console.error('Error fetching threshold:', error));
 }
 
 function parseSpecificFeedback(feedbackString) {
   const steps = [];
   const regex =
-    /- \[(x| )] Change: (.+)\n  From: (.+)\n  To: (.+)\n  Why: (.+)/g; // Modified regex
+    /- \[(x| )] Priority: (CRITICAL|IMPORTANT|OPTIONAL)\n\s*Change: (.+)\n\s*From: (.+)\n\s*To: (.+)\n\s*Why: (.+)/g;
   let match;
 
   while ((match = regex.exec(feedbackString)) !== null) {
     steps.push({
-      change: match[2].trim(), // Capture "Change"
-      from: match[3].trim(), // Capture "From"
-      to: match[4].trim(), // Capture "To"
-      why: match[5].trim(), // Capture "Why"
+      priority: match[2],
+      change: match[3].trim(),
+      from: match[4].trim(),
+      to: match[5].trim(),
+      why: match[6].trim(),
       completed: match[1] === "x",
     });
   }
   return steps;
+}
+
+async function generateFootnote(isRegenerate = false) {
+    const assignmentText = document.getElementById("assignmentText").value;
+    const selectedHC = document.getElementById("hcSelect").value;
+    const score = parseFloat(document.querySelector("#scoreValue").textContent) / 100;
+
+    // Show loading state and disable buttons
+    const generateBtn = document.getElementById("generateFootnoteBtn");
+    const regenerateBtn = document.getElementById("regenerateFootnoteBtn");
+    const loadingDiv = document.querySelector(".footnote-loading");
+    const textDiv = document.querySelector(".footnote-text");
+
+    // Disable both buttons during generation
+    generateBtn.disabled = true;
+    if (regenerateBtn) {
+        regenerateBtn.disabled = true;
+        const regenerateLoader = regenerateBtn.querySelector(".loader");
+        const regenerateText = regenerateBtn.querySelector(".btn-text");
+        if (regenerateLoader && regenerateText) {
+            regenerateLoader.classList.remove("hidden");
+            regenerateText.classList.add("hidden");
+        }
+    }
+
+    // Show loading state
+    if (loadingDiv && textDiv) {
+        loadingDiv.classList.remove("hidden");
+        textDiv.classList.add("hidden");
+    }
+
+    try {
+        const response = await fetch("/api/footnote", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                text: assignmentText,
+                hc_name: selectedHC,
+                score: score,
+                context: currentContext,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            if (response.status === 403) {
+                alert(data.message || "Score too low to generate footnote");
+                return;
+            }
+            throw new Error(data.error || "Failed to generate footnote");
+        }
+
+        // Display the generated footnote
+        const footnoteSection = document.getElementById("generatedFootnote");
+        const loadingDiv = footnoteSection.querySelector(".footnote-loading");
+        const textDiv = footnoteSection.querySelector(".footnote-text");
+
+        loadingDiv.style.display = 'none'; // Hide loading completely
+        textDiv.innerHTML = `<p>${data.footnote}</p>`;
+        footnoteSection.classList.remove("hidden");
+        textDiv.classList.remove("hidden");
+
+        // Hide the initial generate button after first generation
+        if (!isRegenerate) {
+            generateBtn.style.display = 'none';
+        }
+
+    } catch (error) {
+        console.error("Error generating footnote:", error);
+        alert("Error generating footnote: " + error.message);
+    } finally {
+        // Re-enable regenerate button if it exists
+        if (regenerateBtn) {
+            regenerateBtn.disabled = false;
+            const regenerateLoader = regenerateBtn.querySelector(".loader");
+            const regenerateText = regenerateBtn.querySelector(".btn-text");
+            if (regenerateLoader && regenerateText) {
+                regenerateLoader.classList.add("hidden");
+                regenerateText.classList.remove("hidden");
+            }
+        }
+    }
+}
+
+function displayStepItem(step, container) {
+    const stepElement = document.createElement("div");
+    stepElement.className = "step-item";
+    if (step.completed) stepElement.classList.add("completed");
+
+    stepElement.innerHTML = `
+        <div class="step-content">
+            <p><strong>From:</strong> ${step.from}</p>
+            <p><strong>To:</strong> ${step.to}</p>
+            <div class="tooltip">
+                <div class="tooltip-text">${step.why}</div>
+            </div>
+            <button class="mark-done-btn ${step.completed ? 'completed' : ''}" onclick="toggleStepCompletion(this)">
+                ${step.completed ? 'Done' : 'Mark as Done'}
+            </button>
+        </div>
+    `;
+
+    container.appendChild(stepElement);
+}
+
+function toggleStepCompletion(button) {
+  const stepItem = button.closest('.step-item');
+  stepItem.classList.toggle('completed');
+  button.classList.toggle('completed');
+  button.textContent = stepItem.classList.contains('completed') ? 'Done' : 'Mark as Done';
 }
 
 function saveContext() {
@@ -576,7 +755,7 @@ function saveContext() {
 
   // Update the context button to show status
   const contextButton = document.querySelector(
-    'button[onclick="showModal(\'contextModal\')"]'
+    "button[onclick=\"showModal('contextModal')\"]"
   );
   contextButton.classList.add("has-context");
   contextButton.textContent = "Update Context";

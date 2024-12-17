@@ -1,8 +1,13 @@
 from flask import Blueprint, render_template, jsonify, request, current_app
-from .ai.main import analyze_hc  # Import your analyze_hc function
+from .ai.main import analyze_hc
 from .models import Cornerstone, HC
-from .ai.logging_config import logger
+from .ai.logging_config import get_logger  # Change this line
 from .ai.agent_precheck import check_input_quality
+from .ai.agent_footnote import generate_footnote, check_score_threshold, get_score_threshold
+
+# Create module-specific logger
+logger = get_logger('routes')  # Use this instead
+from .ai.agent_footnote import generate_footnote, check_score_threshold, get_score_threshold
 
 main = Blueprint("main", __name__)
 
@@ -27,9 +32,9 @@ def index():
 @main.route("/api/hcs/<cornerstone>")
 def get_hcs(cornerstone):
     logger.info(f"Fetching HCs for cornerstone: {cornerstone}")
-    cornerstone_name = cornerstone.strip().upper().replace("_", " ")
+    # Modify the query to match exact name
     cornerstone_obj = Cornerstone.query.filter(
-        Cornerstone.name.ilike(f"%{cornerstone_name}%")
+        Cornerstone.name == cornerstone.strip()
     ).first_or_404()
     logger.info(f"Found cornerstone: {cornerstone_obj.name}")
 
@@ -97,6 +102,7 @@ def api_feedback():
             )
             logger.info(f"Feedback generated: {feedback}")
             return jsonify(feedback)
+
     except Exception as e:
         logger.error(f"Error processing feedback request: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
@@ -121,4 +127,63 @@ def api_precheck():
         return jsonify({"is_meaningful": is_meaningful, "feedback": feedback})
     except Exception as e:
         logger.error(f"Error in precheck: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@main.route("/api/footnote", methods=["POST"])
+def api_footnote():
+    try:
+        logger.info("Received footnote generation request")
+        
+        if not request.is_json:
+            logger.error("Request is not JSON")
+            return jsonify({"error": "Request must be JSON"}), 400
+
+        data = request.get_json()
+        if not data or not all(key in data for key in ["text", "hc_name", "score"]):
+            logger.error("Missing required fields in request")
+            return jsonify({"error": "Missing required fields"}), 400
+
+        try:
+            score = float(data["score"])
+        except (ValueError, TypeError):
+            logger.error(f"Invalid score value: {data.get('score')}")
+            return jsonify({"error": "Invalid score value"}), 400
+
+        threshold = get_score_threshold()
+        logger.info(f"Checking score {score:.3f} against threshold {threshold:.3f}")
+
+        if not check_score_threshold(score):
+            logger.warning(f"Score {score:.3f} below threshold {threshold:.3f}")
+            return jsonify({
+                "error": "Score too low",
+                "message": f"Score of {score:.1%} is below the required {threshold:.1%}"
+            }), 403
+
+        footnote = generate_footnote(
+            data["text"],
+            data["hc_name"],
+            data.get("context")
+        )
+
+        if not footnote:
+            logger.error("Failed to generate footnote")
+            return jsonify({"error": "Failed to generate footnote"}), 500
+
+        logger.info("Successfully generated footnote")
+        return jsonify({"footnote": footnote})
+
+    except Exception as e:
+        logger.error(f"Error processing footnote request: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@main.route("/api/threshold")
+def get_threshold():
+    """Get the current score threshold"""
+    try:
+        threshold = get_score_threshold()
+        return jsonify({"threshold": threshold})
+    except Exception as e:
+        logger.error(f"Error getting threshold: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500

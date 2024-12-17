@@ -4,8 +4,10 @@ from .agent_general_feedback import generate_general_feedback
 from .agent_specific_feedback import generate_checklist, evaluate_pitfall
 from .agent_evaluation import evaluate_all_criteria
 from .ai_config import initialize_analysis_model, initialize_evaluation_model
-from .logging_config import logger
-import logging
+from .logging_config import get_logger  # Change this line
+
+# Create module-specific logger
+logger = get_logger('ai.main')  # Use this instead
 
 analysis_model = initialize_analysis_model()
 evaluation_model = initialize_evaluation_model()

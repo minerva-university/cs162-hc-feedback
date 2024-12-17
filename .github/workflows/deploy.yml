@@ -12,6 +12,7 @@ jobs:
     name: Run tests
     env:
       TESTING: true
+      GENAI_API_KEY: "dummy_key"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -27,8 +28,8 @@ jobs:
       - name: Install Dependencies
         run: python3-virtualenv/bin/pip install -r requirements.txt
 
-      #- name: Run Tests
-      #  run: ./run_test.sh
+      - name: Run Tests
+       run: ./run_test.sh
 
   deploy:
     name: "Deploy SQLite App to VPS"
@@ -53,16 +54,3 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           PROJECT_ROOT: ${{ secrets.PROJECT_ROOT }}
-
-        # - name: Send Failure Message to Discord
-        #  if: failure()
-        #  run: |
-        #    curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=🚨 Deployment Failed for SQLite App"
-
-      # - name: Print Container Status
-      #   run: |
-      #     sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@$SSH_IP_PROD 'cd ${{ secrets.PROJECT_ROOT }} && docker compose -f docker-compose.dev.yml ps'
-
-      #- name: Deployment Successful Message
-      #  run: |
-      #    curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=🚀 Deployment Successful for SQLite App"
