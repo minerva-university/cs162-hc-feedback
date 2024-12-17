@@ -65,13 +65,23 @@ cs162-hc-feedback/
    pip install -r requirements.txt
    ```
 
-4. Run the application:
+4. Set the .env variables:
+Follow the structure below: 
+
+'''
+GENAI_API_KEY="" # Your GenAI API key - ideally gemini-1.5-flash-8b
+GEMINI_MODEL_NAME="gemini-1.5-flash"
+SCORE_THRESHOLD=0.8 # For footnote generator
+'''
+
+6. Run the application:
 
    ```bash
    python run.py
    ```
 
-5. Visit `http://localhost:5000` in your browser.
+7. Visit `http://127.0.0.1:8080` in your browser. The app is also deployed on http://hc-feedback.duckdns.org/ for development
+ and on http://hc-feedback-tool.duckdns.org/ for production.
 
 ## Development Guidelines
 
