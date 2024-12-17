@@ -1,5 +1,3 @@
-# README.md
-
 # HC Feedback System
 
 A Flask-based web application for providing automated feedback on assignments.
@@ -10,15 +8,40 @@ A Flask-based web application for providing automated feedback on assignments.
 cs162-hc-feedback/
 ├── README.md               # Main documentation
 ├── requirements.txt        # Python dependencies
-├── run.py                 # Application entry point
-├── app/                   # Application package
-│   ├── __init__.py       # App initialization
-│   ├── routes.py         # Route definitions
-│   ├── static/           # Static files (CSS, JS)
-│   └── templates/        # HTML templates
-└── docs/                 # Additional documentation
-    └── CONTRIBUTING.md   # Contribution guidelines
+├── run.py                  # Application entry point
+├── Dockerfile              # Docker configuration
+├── app/                    # Application package
+│   ├── __init__.py         # App initialization
+│   ├── routes.py           # Route definitions
+│   ├── static/             # Static files (CSS, JS)
+│   ├── templates/          # HTML templates
+│   ├── AI/                 # AI-related modules
+│   └── utils/              # Utility functions and helpers
+├── archive/                # Archived files and old versions
+├── docs/                   # Additional documentation
+│   └── CONTRIBUTING.md     # Contribution guidelines
+├── feedback/               # Feedback-related modules
+└── tests/                  # Unit and integration tests
 ```
+
+### Detailed Explanation
+
+- **README.md**: This file. It contains the main documentation for the project.
+- **requirements.txt**: Lists all the Python dependencies required for the project.
+- **run.py**: The entry point for the application. It initializes the Flask app and starts the server.
+- **Dockerfile**: Configuration file for Docker, used to containerize the application.
+- **app/**: The main application package.
+  - **\_\_init\_\_.py**: Initializes the Flask app and sets up configurations.
+  - **routes.py**: Defines the routes/endpoints for the application.
+  - **static/**: Contains static files like CSS and JavaScript.
+  - **templates/**: Contains HTML templates for rendering web pages.
+  - **AI/**: Contains modules related to AI functionalities, such as models and processing scripts.
+  - **utils/**: Contains utility functions and helper scripts during the development of the application.
+- **archive/**: Contains archived files and old versions of the project for reference.
+- **docs/**: Contains additional documentation.
+  - **CONTRIBUTING.md**: Guidelines for contributing to the project.
+- **feedback/**: Contains modules related to feedback processing and generation.
+- **tests/**: Contains unit tests to ensure the application works as expected.
 
 ## Setup and Installation
 
